@@ -1,5 +1,5 @@
 import API from '../API'
-export default class HTTPContoller {
+export default class HTTPController {
   private httpMethod:string = null
   private httpEvent: any = null
   private postData: any = null
@@ -19,10 +19,13 @@ export default class HTTPContoller {
       if (this.httpEvent.queryString.length === 0) {
         return API.sendResponseAsHTML('docs')
       }
+
+      //TODO: Pass off to GETController
       return API.sendSuccessResponse('This was a successful GET request')
     }
 
     if (this.httpMethod === 'POST') {
+      //TODO: Examine operation
       return API.sendSuccessResponse('This was a successful POST request')
     }
   }
@@ -31,22 +34,22 @@ export default class HTTPContoller {
     const errors = []
     if (this.httpMethod === 'GET') {
       if (this.httpEvent.queryString.length > 0 && !this.httpEvent.parameter.table) {
-        errors.push(ValidationStateMessages.MISSING_TABLE_GET)
+        errors.push(ValidationErrorMessages.MISSING_TABLE_GET)
       }
     }
 
     if (this.httpMethod === 'POST') {
       if(!this.postData) {
-        errors.push(ValidationStateMessages.MISSING_POST_BODY)
+        errors.push(ValidationErrorMessages.MISSING_POST_BODY)
       } else {
         if (!this.postData.table) {
-          errors.push(ValidationStateMessages.MISSING_TABLE_POST)
+          errors.push(ValidationErrorMessages.MISSING_TABLE_POST)
         }
         if (!this.postData.operation) {
-          errors.push(ValidationStateMessages.MISSING_OPERATION)
+          errors.push(ValidationErrorMessages.MISSING_OPERATION)
         }
         if((this.postData.operation === 'update' || this.postData.operation === 'delete') && !this.postData.data.id) {
-          errors.push(ValidationStateMessages.MISSING_ID)
+          errors.push(ValidationErrorMessages.MISSING_ID)
         }
       }
     }
@@ -55,8 +58,7 @@ export default class HTTPContoller {
   
 }
 // This ENUM should cover all of the 400 bad request error messages
-enum ValidationStateMessages {
-  VALID_REQUEST = 'valid request',
+enum ValidationErrorMessages {
   MISSING_TABLE_GET = 'Each GET request must specify a table parameter at minimum',
   MISSING_TABLE_POST = 'Each POST request must specify a table key:value property',
   MISSING_OPERATION = 'Each POST request must specify an operation key:value property: create, update, delete',

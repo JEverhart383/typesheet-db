@@ -1,10 +1,10 @@
-import HTTPContoller from "./controllers/HTTPController";
+import HTTPController from "./controllers/HTTPController";
 
 export default class API {
   static processRequest(method:string, event ) {
      const lock = LockService.getScriptLock()
      lock.waitLock(30000)
-     const httpController = new HTTPContoller(method, event)
+     const httpController = new HTTPController(method, event)
      return httpController.processHTTPRequest()
      lock.releaseLock();
   }
