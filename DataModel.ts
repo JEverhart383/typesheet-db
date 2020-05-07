@@ -2,14 +2,14 @@ var DataModel = {
   setMasterProps: function (jsonMasterProps) {
     try {
       const props = PropertiesService.getDocumentProperties();
-      props.setProperty('RESTfulSheets::MasterProps', JSON.stringify(jsonMasterProps)); 
+      props.setProperty('TypeSheetDB::MasterProps', JSON.stringify(jsonMasterProps)); 
     } catch (err) {
       Logger.log(err)
     }
   },
   getMasterPropsAsJSON: function () {
     const props = PropertiesService.getDocumentProperties()
-    const returnedProps = props.getProperty('RESTfulSheets::MasterProps')
+    const returnedProps = props.getProperty('TypeSheetDB::MasterProps')
     Logger.log(returnedProps)
     return JSON.parse(returnedProps)
   },

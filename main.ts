@@ -29,21 +29,11 @@ function showDocumentationPage () {
   return HtmlService.createTemplateFromFile('docs').evaluate();
 }
 
-var PUBLIC_URL = 'https://script.google.com/macros/s/AKfycbyrGXQ-YfBob2MRtz8kbiuAiXJFKxI10E5rGYlWd_tlnkPhZUIe/exec'; 
 
 function getPublicURL () {
-  return PUBLIC_URL; 
+  return ScriptApp.getService().getUrl(); 
 }
 
-function create_UUID(){
-    var dt = new Date().getTime();
-    var uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-        var r = (dt + Math.random()*16)%16 | 0;
-        dt = Math.floor(dt/16);
-        return (c=='x' ? r :(r&0x3|0x8)).toString(16);
-    });
-    return uuid;
-}
 
 /******
 HTTP Method Handlers

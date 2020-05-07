@@ -9,7 +9,7 @@
   </head>
   <body>
   <div class="container" id="data-model-docs">
-    <h1><i class="large material-icons">cloud</i> RESTful Sheets</h1>
+    <h1><i class="large material-icons">cloud</i> TypeSheetDB</h1>
     <p v-if="baseURL" >API Available at: {{baseURL}}</p>
     <h3>Data Model</h3>
     <div class="card" v-for="table in existingDataModel" :key="table.name">
@@ -34,7 +34,7 @@
     </div>
   </div>
   <script type="text/javascript">
-     const restfulSheetsDocs = new Vue({
+     const TypeSheetDBDocs = new Vue({
        el: '#data-model-docs',
        data: {
         baseURL: '',

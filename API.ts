@@ -34,9 +34,6 @@ export default class API {
   static sendBadRequestErrorResponse(message: string) {
     return API.sendResponseAsJSON(API.createResultObject(false, 400, message))
   }
-  static validateRequest() {
-
-  }
 }
 
 
