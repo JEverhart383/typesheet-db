@@ -1,33 +1,33 @@
-var DataModel = {
-  setMasterProps: function (jsonMasterProps) {
+export default class DataModel {
+  static setMasterProps (jsonMasterProps) {
     try {
-      const props = PropertiesService.getDocumentProperties();
-      props.setProperty('RESTfulSheets::MasterProps', JSON.stringify(jsonMasterProps)); 
+      const props = PropertiesService.getScriptProperties();
+      props.setProperty('TypeSheetDB::MasterProps', JSON.stringify(jsonMasterProps)); 
     } catch (err) {
       Logger.log(err)
     }
-  },
-  getMasterPropsAsJSON: function () {
-    const props = PropertiesService.getDocumentProperties()
-    const returnedProps = props.getProperty('RESTfulSheets::MasterProps')
+  }
+  static getMasterPropsAsJSON() {
+    const props = PropertiesService.getScriptProperties()
+    const returnedProps = props.getProperty('TypeSheetDB::MasterProps')
     Logger.log(returnedProps)
-    return JSON.parse(returnedProps)
-  },
-  updateMasterPropsAndSave: function (tableDef) {
-    const masterProps = this.getMasterPropsAsJSON(); 
+    return returnedProps === null ? {tables:{}} : JSON.parse(returnedProps)
+  }
+  static updateMasterPropsAndSave(tableDef) {
+    const masterProps = DataModel.getMasterPropsAsJSON(); 
     var tableName = tableDef.name; 
     masterProps.tables[tableName] = tableDef; 
-    this.setMasterProps(masterProps); 
-    return this.getMasterPropsAsJSON(); 
-  },
-  deleteTableFromMasterProps: function (tableName) {
-    const masterProps = this.getMasterPropsAsJSON(); 
+    DataModel.setMasterProps(masterProps); 
+    return DataModel.getMasterPropsAsJSON(); 
+  }
+  static deleteTableFromMasterProps(tableName) {
+    const masterProps = DataModel.getMasterPropsAsJSON(); 
     delete masterProps.tables[tableName]; 
-    this.setMasterProps(masterProps); 
-    return this.getMasterPropsAsJSON(); 
-  },
-  getTableDefinitionFromMasterProps: function (tableName) {
-    var masterProps = this.getMasterPropsAsJSON()
+    DataModel.setMasterProps(masterProps); 
+    return DataModel.getMasterPropsAsJSON(); 
+  }
+  static getTableDefinitionFromMasterProps(tableName) {
+    var masterProps = DataModel.getMasterPropsAsJSON()
     var tableDef = masterProps.tables[tableName]
     return tableDef
   }

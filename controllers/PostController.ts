@@ -35,6 +35,6 @@ export default class PostController {
     table.appendRow(rowToAdd)
     //return success to caller
     
-    return API.sendSuccessResponse(`Created a resource in ${this.table} table`, rowToAdd)
+    return API.sendSuccessResponse(`Successfully created a record in the '${this.table}' table`, rowToAdd)
   }
 }

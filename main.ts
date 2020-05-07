@@ -26,10 +26,6 @@ function showOptionsSidebar () {
    .showSidebar(html)
 }
 
-function showDocumentationPage () {
-  return HtmlService.createTemplateFromFile('docs').evaluate();
-}
-
 
 function getPublicURL () {
   return ScriptApp.getService().getUrl(); 
