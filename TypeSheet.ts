@@ -14,6 +14,17 @@ export default class TypeSheet {
     }
   
   }
+  static getRecordLocationInTable (table: GoogleAppsScript.Spreadsheet.Sheet, id:string): any {
+    //TODO: Update this method to return recordLocation as number
+    var lastRow = table.getLastRow();
+    var idValues = table.getRange(1, 1, lastRow).getValues().map(function(cell){ return cell[0]});
+    Logger.log(idValues);
+    var recordLocation = idValues.indexOf(id)
+    if (recordLocation === -1) {
+      return false;
+    }
+    return recordLocation + 1;
+  }
   static getTableValuesAsArray (table: GoogleAppsScript.Spreadsheet.Sheet ): any[] {
     var allValues = table.getDataRange().getValues(); 
     return allValues;
@@ -38,7 +49,10 @@ export default class TypeSheet {
     var filters = [];
     
     for (var key in parameter) {
-      var filter = {}
+      var filter = {
+        prop: null,
+        value: null
+      }
       filter.prop = key;
       filter.value = parameter[key]; 
       filters.push(filter); 
