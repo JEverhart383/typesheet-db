@@ -22,8 +22,8 @@ export default class API {
       data: data
     };  
   }
-  static sendSuccessResponse (message:string) {
-    return API.sendResponseAsJSON(API.createResultObject(true, 200, message))
+  static sendSuccessResponse (message:string, data = []) {
+    return API.sendResponseAsJSON(API.createResultObject(true, 200, message, data))
   }
   static sendInternalErrorResponse(message:string) {
     return API.sendResponseAsJSON(API.createResultObject(false, 500, message))

@@ -1,4 +1,5 @@
 import API from './API'
+import TypeSheet from './TypeSheet'
 
 
 /********
@@ -43,43 +44,10 @@ This is the basis of the REST API and its guts
 
 function doGet (e) {
   return API.processRequest('GET', e)
-  //TODO: Move this to GET Controller and HTTP Controller Valdation
-  // const queryString = e.queryString; 
-  // const parameter = e.parameter; 
-  // const returnValue = {
-  //   qs: queryString, 
-  //   parameters: parameter
-  // }
-  // if (queryString.length === 0) { 
-  //   return showDocumentationPage(); 
-  // } else {
-  //   return processGetRequest(parameter)
-  //   // return sendResultAsJSON(returnValue); 
-  // }
 }
 
 function doPost (e) {
   return API.processRequest('POST', e)
-  // var postData = JSON.parse(e.postData ? e.postData.contents : null); 
-  
-  // if (postData === null) {
-  //   var result = API.createResultObject(false, 500, 'Each POST request must contain a JSON body', null);
-  //   return API.sendResultAsJSON(result);
-  // }
- 
-  // return processPostRequest(postData)
-  
-}
-
-function processGetRequest (parameter) {
-    //TODO: Move this stuff to the validateRequest method of HTTP Controller
-    if (parameter.table) {
-     var result = API.createResultObject(true, 200, 'Retrieved values', routeGetRequestOperation(parameter)); 
-    } else {
-     var result = API.createResultObject(false, 500, 'Each GET request must specify a table at minimum', null)
-    }
-  
-  return API.sendResultAsJSON(result);
 }
 
 function processPostRequest (postData) {
@@ -97,15 +65,6 @@ function processPostRequest (postData) {
   return API.sendResultAsJSON(result);
 }
 
-function routeGetRequestOperation (parameter) {
-  //TODO this should go in HTTPController.processHTTPRequest
-  var tableName = parameter.table;
-  var table = getTableByName(tableName); 
-  var tableValues = getAllTableValues(table);
-  var jsonValues = processTableValuesIntoJSON(tableValues);
-  var filteredValues = filterTablesByParams(parameter, jsonValues);
-  return filteredValues;
-}
 
 function routePostRequestOperation (postData) {
   //TODO this should go in HTTPController.processHTTPRequest
@@ -136,7 +95,7 @@ function processCreateOperation (postData) {
 
   var recordToAdd = postData.record;
   //get reference to table
-  var table = getTableByName(tableName);
+  var table = TypeSheet.getTableByName(tableName);
   //if autoincrement enabled, get last row and return previous id
   //TODO
   //create new array of data
@@ -161,7 +120,7 @@ function processUpdateOperation (postData) {
   //Think about moving some of this up to HTTPController.validateRequest
   var tableName = postData.table;
   var tableDef = DataModel.getTableDefinitionFromMasterProps(tableName);
-  var table = getTableByName(tableName);
+  var table = TypeSheet.getTableByName(tableName);
   var recordToUpdate = postData.record;
   var recordId = recordToUpdate.id; 
   if (!recordId) {
@@ -188,7 +147,7 @@ function processDeleteOperation (postData) {
   //TODO: This should go in DeleteController.ts
   //Think about moving some of this up to HTTPController.validateRequest
   var tableName = postData.table;
-  var table = getTableByName(tableName);
+  var table = TypeSheet.getTableByName(tableName);
   var recordToDelete = postData.record;
   var recordId = recordToDelete.id; 
   if (!recordId) {
@@ -308,23 +267,6 @@ function getAllTables () {
   }
 }
 
-function getTableByName (tableName) {
-  try {
-
-    var tables = SpreadsheetApp.getActiveSpreadsheet().getSheets()    
-    var filteredTables = tables.filter(function(table){
-      return (table.getName().toLowerCase() === tableName.toLowerCase())
-    })
-    
-    var table = filteredTables[0];
-    return table; 
-    
-  } catch (err) {
-    Logger.log(err)
-    
-  }
-
-}
 
 /*
 * @param table : A Google Sheet object for a particular sheet
@@ -342,74 +284,4 @@ function getRecordLocationInTable (table, id) {
   return recordLocation + 1;
 }
 
-
-/*
-* @param table : A Google Sheet object for a particular sheet 
-* @return allValues: A 2D array of all the table values, including headers
-**/
-function getAllTableValues (table) {
-  var allValues = table.getDataRange().getValues(); 
-  return allValues;
-}
-
-function filterTablesByParams (parameter, valuesAsJSON) {
-  //remove table key
-  delete parameter['table'];
-  var filters = [];
-  
-  for (var key in parameter) {
-    var filter = {}
-    filter.prop = key;
-    filter.value = parameter[key]; 
-    filters.push(filter); 
-  }
-  
-  return recursiveFilterProcess(filters, valuesAsJSON); 
-}
-
-function recursiveFilterProcess (arrayOfFilters, arrayOfValues) {
-  
-  if (arrayOfFilters.length > 0) {
-    var filterToCheck = arrayOfFilters[0];
-    var filteredArray = arrayOfValues.filter(function(value){
-      if (value[filterToCheck.prop] === filterToCheck.value) {
-        return true;
-      } else {
-        return false; 
-      }
-    })
-    // remove filter we just used
-    arrayOfFilters.shift();
-    // if there are still filters to be checked, 
-    // call again. If not, resolve
-    if (arrayOfFilters.length > 0) {
-      return recursiveFilterProcess(arrayOfFilters, filteredArray)
-    } else {
-      return filteredArray; 
-    }
-  } else {
-    return arrayOfValues; 
-  }
-  
-}
-
-/*
-* @param rows : A 2D array of table rows and values
-* @param tableDef : A JSON object containing information about the data model for the table
-* @return jsonValues : An array of JSON objects mapped to table values via the data model types
-**/
-function processTableValuesIntoJSON (rows) {
-  var headers = rows.shift()
-  var jsonValues = rows.map(function(row) {
-    var jsonValue = {}
-    row.forEach(function(value, index) {
-      var key = headers[index].split('::')[0].toLowerCase();
-      jsonValue[key] = value;
-    })
-    return jsonValue
-  })
-  
-  return jsonValues
-  
-}
 

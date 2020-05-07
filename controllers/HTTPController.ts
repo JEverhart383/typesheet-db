@@ -1,4 +1,5 @@
 import API from '../API'
+import GetController from './GetContoller'
 export default class HTTPController {
   private httpMethod:string = null
   private httpEvent: any = null
@@ -19,9 +20,8 @@ export default class HTTPController {
       if (this.httpEvent.queryString.length === 0) {
         return API.sendResponseAsHTML('docs')
       }
-
-      //TODO: Pass off to GETController
-      return API.sendSuccessResponse('This was a successful GET request')
+      const getController = new GetController(this.httpEvent)
+      return getController.processRequest()
     }
 
     if (this.httpMethod === 'POST') {
