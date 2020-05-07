@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+  </head>
+  <body>
+  <div class="container" id="data-model-docs">
+    <h1><i class="large material-icons">cloud</i> RESTful Sheets</h1>
+    <p v-if="baseURL" >API Available at: {{baseURL}}</p>
+    <h3>Data Model</h3>
+    <div class="card" v-for="table in existingDataModel" :key="table.name">
+      <div class="card-content">
+        <span class="card-title">{{table.name}}</span>
+        <table>
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Data Type</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="column in table.columns" :key="column.name">
+             <td>{{column.name}}</td>
+             <td>{{column.type}}</td>
+            </tr>
+          </tbody>
+        </table>
+        
+      </div>
+    </div>
+  </div>
+  <script type="text/javascript">
+     const restfulSheetsDocs = new Vue({
+       el: '#data-model-docs',
+       data: {
+        baseURL: '',
+        existingDataModel: ''
+       },
+       methods: {
+        loadExistingDataModel: function (data) {
+          console.log(data)
+          this.existingDataModel = data.tables
+        },
+        loadBaseURL: function (data) {
+         this.baseURL = data; 
+        },
+        onSuccess: function (data) {
+         M.toast({html: data})
+        }
+       },
+       computed: {
+       },
+       created: function () {
+         google.script.run.withSuccessHandler(this.loadExistingDataModel).getDataModel()
+         google.script.run.withSuccessHandler(this.loadBaseURL).getPublicURL()
+       },
+       mounted: function () {
+         var elems = document.querySelectorAll('.collapsible');
+         var instances = M.Collapsible.init(elems, {accordion: true});
+       }
+     })
+    </script>
+  </body>
+</html>
+
+
