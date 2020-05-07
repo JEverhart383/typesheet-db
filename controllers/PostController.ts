@@ -1,5 +1,6 @@
 import API from '../API'
 import TypeSheet from '../TypeSheet'
+import DataModel from '../DataModel'
 
 export default class PostController {
   private table:string;

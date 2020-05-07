@@ -2,6 +2,7 @@ import API from '../API'
 import GetController from './GetContoller'
 import PostController from './PostController'
 import TypeSheet from '../TypeSheet'
+import DataModel from '../DataModel'
 
 export default class HTTPController {
   private httpMethod:string = null
