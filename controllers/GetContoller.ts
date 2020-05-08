@@ -1,5 +1,6 @@
 import API from '../API'
 import TypeSheet from '../TypeSheet'
+import DataModel from '../DataModel'
 export default class GetController {
   private table: string = null
   private parameters: any = null
@@ -9,6 +10,9 @@ export default class GetController {
   }
 
   processRequest() {
+    if (this.table === 'dataModel') {
+      return API.sendSuccessResponse(`Returned data model`, DataModel.getMasterPropsAsJSON())
+    }
     //TODO: think about this pattern, new TypeSheet(table)
     //const items = TypeSheet.getTypes(parameters)
     var table = TypeSheet.getTableByName(this.table); 

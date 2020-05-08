@@ -1,0 +1,65 @@
+<script type="text/javascript">
+  const restfulSheets = new Vue({
+    el: '#restful-sheets',
+    data: {
+     newTable: {
+       name: '',
+       columns: []
+     },
+     existingDataModel: null,
+     existingSheets: [],
+     selectedPanel: 'home',
+     selectedSheet: ''
+    },
+    methods: {
+     addColumnToNewTable: function () {
+       let newColumn = {
+         name: '',
+         type: '',
+         state: 'editing'
+        }
+        this.newTable.columns.push(newColumn)
+     },
+     addTable: function () {
+       google.script.run.withSuccessHandler(this.onSuccess).addTableToSpreadsheet(this.newTable)
+     },
+     deleteTable: function (sheet) {
+       google.script.run.withSuccessHandler(this.onSuccess).deleteTable(sheet)
+     },
+     loadExistingDataModel: function (data) {
+       console.log(data)
+       this.existingDataModel = data
+     },
+     getAllTablesSuccess: function (data) {
+       this.existingSheets = data
+     },
+     routeToHomePanel: function () {
+       this.selectedPanel = 'home'
+       google.script.run.withSuccessHandler(this.getAllTablesSuccess).getAllTables()
+     },
+     routeToAddTable: function () {
+       this.selectedPanel = 'add'
+     },
+     routeToEditTable: function (sheet) {
+       this.selectedPanel = 'edit'
+       this.selectedSheet = sheet
+       google.script.run.setActiveTable(sheet)
+     },
+     routeToDeleteTable: function (sheet) {
+       this.selectedPanel = 'delete'
+       this.selectedSheet = sheet
+       google.script.run.setActiveTable(sheet)
+     },
+     onSuccess: function (data) {
+      this.routeToHomePanel()
+      M.toast({html: data})
+     }
+    },
+    computed: {
+    },
+    created: function () {
+      google.script.run.withSuccessHandler(this.getAllTablesSuccess).getAllTables()
+      google.script.run.withSuccessHandler(this.loadExistingDataModel).getProperties()
+    }
+  })
+ </script>

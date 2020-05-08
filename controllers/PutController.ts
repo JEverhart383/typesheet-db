@@ -13,26 +13,28 @@ export default class PutController {
   }
 
    processRequest () {
-    var tableName = this.table;
-    var tableDef = DataModel.getTableDefinitionFromMasterProps(tableName);
-    var table = TypeSheet.getTableByName(tableName);
-    var recordToUpdate = this.data;
-    var recordId = recordToUpdate.id; 
-    var recordLocation = TypeSheet.getRecordLocationInTable(table, recordId);
+    const tableDef = DataModel.getTableDefinitionFromMasterProps(this.table);
+    //TODO: Deal with this later, but there is a philospical underpinning here that needs to be examined.
+    //Namely, do we add items using the data model we can extract from the spreadsheet in a flexible way,
+    //or do we enforce consistency to provide more secure data; right now, we're favoring consistency 
+    if (!tableDef) {
+      return API.sendBadRequestErrorResponse(`The specified table doesn't exist in your data model. Add it to perform create, update, and delete operations.`)
+    }
+    const table = TypeSheet.getTableByName(this.table);
+    const recordLocation = TypeSheet.getRecordLocationInTable(table, this.data.id);
     
-    if (recordLocation === false) {
-      return API.sendNotFoundResponse('A record with the id  '+ recordId + ' cannot be found in ' + this.table + ' table')
+    if (recordLocation === -1) {
+      return API.sendNotFoundResponse(`A record with the id ${this.data.id} cannot be found in ${this.table} table`)
     }
     
-    var rowToUpdate = tableDef.columns.map(function(column) {
-      var lowercaseColumnName = column.name.toLowerCase();
-      var dataToReturn = recordToUpdate[lowercaseColumnName] ? recordToUpdate[lowercaseColumnName] : '';
-      return dataToReturn;
+    const rowToUpdate = tableDef.columns.map(function(column) {
+      let columnName = column.name.toLowerCase();
+      return this.data[columnName] ? this.data[columnName] : '';
     })
     
     table.getRange(recordLocation, 1, 1, rowToUpdate.length).setValues([rowToUpdate]);
     
-    return API.sendSuccessResponse('Successfully updated record with the id '+ recordId + ' in ' + this.table + ' table', this.data)
+    return API.sendSuccessResponse(`Successfully updated record with the id ${this.data.id} in ${this.table} table`, this.data)
   
   }
 }

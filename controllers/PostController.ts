@@ -1,6 +1,7 @@
 import API from '../API'
 import TypeSheet from '../TypeSheet'
 import DataModel from '../DataModel'
+import Helper from '../Helper'
 
 export default class PostController {
   private table:string;
@@ -13,24 +14,20 @@ export default class PostController {
   }
 
    processRequest () {
-    //TODO: This should go in PostController.ts
-    //get table definition from master props
-    var tableName = this.table;
-    var tableDef = DataModel.getTableDefinitionFromMasterProps(tableName)
-  
-    var recordToAdd = this.data;
-    //get reference to table
-    var table = TypeSheet.getTableByName(tableName);
-    //if autoincrement enabled, get last row and return previous id
-    //TODO
-    //create new array of data
-    var rowToAdd = tableDef.columns.map(function(column) {
-      var lowercaseColumnName = column.name.toLowerCase();
-      if (lowercaseColumnName === 'id') {
+    const tableDef = DataModel.getTableDefinitionFromMasterProps(this.table)
+    //TODO: Deal with this later, but there is a philospical underpinning here that needs to be examined.
+    //Namely, do we add items using the data model we can extract from the spreadsheet in a flexible way,
+    //or do we enforce consistency to provide more secure data; right now, we're favoring consistency 
+    if (!tableDef) {
+      return API.sendBadRequestErrorResponse(`The specified table doesn't exist in your data model. Add it to perform create, update, and delete operations.`)
+    }
+    const table = TypeSheet.getTableByName(this.table);
+    const rowToAdd = tableDef.columns.map(function(column) {
+      var columnName = column.name.toLowerCase();
+      if (columnName === 'id') {
         return Helper.createUUID();
       }
-      var dataToReturn = recordToAdd[lowercaseColumnName] ? recordToAdd[lowercaseColumnName] : '';
-      return dataToReturn;
+      return this.data[columnName] ? this.data[columnName] : '';
     })
     //append array to sheet
     table.appendRow(rowToAdd)

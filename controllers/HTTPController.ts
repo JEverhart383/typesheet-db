@@ -2,8 +2,6 @@ import API from '../API'
 import GetController from './GetContoller'
 import PostController from './PostController'
 import DeleteController from './DeleteController'
-import TypeSheet from '../TypeSheet'
-import DataModel from '../DataModel'
 import PutController from './PutController'
 
 export default class HTTPController {
@@ -26,7 +24,7 @@ export default class HTTPController {
     try {
       if (this.httpMethod === 'GET') {
         if (this.httpEvent.queryString.length === 0) {
-          return API.sendResponseAsHTML('docs')
+          return API.sendResponseAsHTML('ui/web-app/index')
         }
         const getController = new GetController(this.httpEvent)
         return getController.processRequest()

@@ -1,0 +1,31 @@
+<script type="text/javascript">
+  const TypeSheetDBDocs = new Vue({
+    el: '#data-model-docs',
+    data: {
+     baseURL: '',
+     existingDataModel: ''
+    },
+    methods: {
+     loadExistingDataModel: function (data) {
+       console.log(data)
+       this.existingDataModel = data.tables
+     },
+     loadBaseURL: function (data) {
+      this.baseURL = data; 
+     },
+     onSuccess: function (data) {
+      M.toast({html: data})
+     }
+    },
+    computed: {
+    },
+    created: function () {
+      google.script.run.withSuccessHandler(this.loadExistingDataModel).getDataModel()
+      google.script.run.withSuccessHandler(this.loadBaseURL).getPublicURL()
+    },
+    mounted: function () {
+      var elems = document.querySelectorAll('.collapsible');
+      var instances = M.Collapsible.init(elems, {accordion: true});
+    }
+  })
+ </script>

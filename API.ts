@@ -11,7 +11,7 @@ export default class API {
   static sendResponseAsJSON (result): GoogleAppsScript.Content.TextOutput {
     return ContentService.createTextOutput(JSON.stringify(result)).setMimeType(ContentService.MimeType.JSON)
   }
-  static sendResponseAsHTML (fileLocation:string = 'docs') : GoogleAppsScript.HTML.HtmlOutput {
+  static sendResponseAsHTML (fileLocation:string = 'ui/web-app/index') : GoogleAppsScript.HTML.HtmlOutput {
     return HtmlService.createTemplateFromFile(fileLocation).evaluate();
   }
   static createResultObject(success: boolean, statusCode: number, message: string, data:any = null ): APIResult {

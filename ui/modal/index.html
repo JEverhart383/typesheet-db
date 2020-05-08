@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+  </head>
+  <body>
+    <h1>Testing Modal</h1>
+     <div class="container" id="restful-sheets">
+     <!-- Start Loading Spinner -->
+     <div v-if="existingSheets.length === 0">
+     Loading your tables...
+       <div class="progress">
+         <div class="indeterminate"></div>
+       </div>
+     </div>
+     <!-- End Loading Spinner -->
+     <p>Available at: <?= getPublicURL() ?></p>
+     
+     <!-- Include Home Panel -->
+     <?!= include('ui/modal/panels/home'); ?>
+     <!--End Include Home Panel -->
+      
+     <!--Start Include Add Panel -->
+     <?!= include('ui/modal/panels/add'); ?>
+    <!--End Include Add  Panel -->
+      
+    <!--Start Include Add Panel -->
+    <?!= include('ui/modal/panels/edit'); ?>
+    <!--End Include Add  Panel -->
+      
+    <!--Start Include Add Panel -->
+    <?!= include('ui/modal/panels/delete'); ?>
+    <!--End Include Add  Panel -->
+     
+     
+     </div>
+     <!--End container -->
+
+     <?!= include('ui/modal/js'); ?>
+  
+  </body>
+</html>
+
+

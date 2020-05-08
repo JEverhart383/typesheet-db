@@ -22,7 +22,7 @@ export default class TypeSheet {
     Logger.log(idValues);
     var recordLocation = idValues.indexOf(id)
     if (recordLocation === -1) {
-      return false;
+      return -1;
     }
     return recordLocation + 1;
   }

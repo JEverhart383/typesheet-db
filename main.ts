@@ -11,25 +11,32 @@ spreadsheet is opened.
 ********/
 function onOpen () {
   SpreadsheetApp.getUi()
-    .createMenu('RESTful Sheets')
-    .addItem('Edit Options', 'showOptionsSidebar')
+    .createMenu('TypeSheetDB')
+    .addItem('Edit Data Model', 'showOptionsSidebar')
     .addToUi();  
   
 }
 
 function showOptionsSidebar () {
-  const html = HtmlService.createTemplateFromFile('options')
+  const html = HtmlService.createTemplateFromFile('ui/modal/index')
     .evaluate()
     .setTitle('RESTful Sheets Options')
-    .setWidth(350)
+    .setWidth(750)
+    .setHeight(800)
   
   SpreadsheetApp.getUi()
-   .showSidebar(html)
+   .showModalDialog(html, 'Edit Data Model')
 }
 
 
 function getPublicURL () {
   return ScriptApp.getService().getUrl(); 
+}
+
+
+function include(filename) {
+  return HtmlService.createHtmlOutputFromFile(filename)
+      .getContent();
 }
 
 

@@ -1,5 +1,6 @@
 import API from '../API'
 import TypeSheet from '../TypeSheet'
+import DataModel from '../DataModel';
 
 export default class DeleteController {
   private table:string;
@@ -12,19 +13,22 @@ export default class DeleteController {
   }
 
    processRequest () {
-    //TODO: This should go in PostController.ts
-    //get table definition from master props
-    var tableName = this.table;
-    var table = TypeSheet.getTableByName(tableName);
-    var recordToDelete = this.data;
-    var recordId = recordToDelete.id; 
-    var recordLocation = TypeSheet.getRecordLocationInTable(table, recordId);
+    const tableDef = DataModel.getTableDefinitionFromMasterProps(this.table);
     
-    if (recordLocation === false) {
-      return API.sendNotFoundResponse('A record with the id  '+ recordId + ' cannot be found in ' + this.table + ' table')
+    //TODO: Deal with this later, but there is a philospical underpinning here that needs to be examined.
+    //Namely, do we add items using the data model we can extract from the spreadsheet in a flexible way,
+    //or do we enforce consistency to provide more secure data; right now, we're favoring consistency 
+    if (!tableDef) {
+      return API.sendBadRequestErrorResponse(`The specified table doesn't exist in your data model. Add it to perform create, update, and delete operations.`)
+    }
+    const table = TypeSheet.getTableByName(this.table);
+    const recordLocation = TypeSheet.getRecordLocationInTable(table, this.data.id);
+    
+    if (recordLocation === -1) {
+      return API.sendNotFoundResponse('A record with the id  '+ this.data.id + ' cannot be found in ' + this.table + ' table')
     }
     table.deleteRow(recordLocation)
 
-    return API.sendSuccessResponse('Successfully deleted record with the id  '+ recordId + ' in ' + this.table + ' table', this.data)
+    return API.sendSuccessResponse('Successfully deleted record with the id  '+ this.data.id + ' in ' + this.table + ' table', this.data)
   }
 }
