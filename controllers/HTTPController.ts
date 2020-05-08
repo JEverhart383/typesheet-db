@@ -4,6 +4,7 @@ import PostController from './PostController'
 import DeleteController from './DeleteController'
 import TypeSheet from '../TypeSheet'
 import DataModel from '../DataModel'
+import PutController from './PutController'
 
 export default class HTTPController {
   private httpMethod:string = null
@@ -39,7 +40,8 @@ export default class HTTPController {
             response = postController.processRequest()
             break;
           case 'update':
-            response =  processUpdateOperation(this.postData);
+            const putController = new PutController(this.httpEvent, this.postData)
+            response =  putController.processRequest()
             break;
           case 'delete':
             const deleteController = new DeleteController(this.httpEvent, this.postData)
@@ -87,51 +89,4 @@ enum ValidationErrorMessages {
   MISSING_OPERATION = 'Each POST request must specify an operation key:value property: create, update, delete',
   MISSING_POST_BODY = 'Each POST request must have a vaild POST body in JSON',
   MISSING_ID = 'Each requests using the update or delete operations need to specify an id key:value property as a part of postBody.data'
-}
-
-function processUpdateOperation (postData) {
-  //TODO: This should go in PutController.ts
-  //Think about moving some of this up to HTTPController.validateRequest
-  var tableName = postData.table;
-  var tableDef = DataModel.getTableDefinitionFromMasterProps(tableName);
-  var table = TypeSheet.getTableByName(tableName);
-  var recordToUpdate = postData.record;
-  var recordId = recordToUpdate.id; 
-  if (!recordId) {
-    return API.createResultObject(false, 500, 'You must supply an id as a part of the record you wish to update');
-  }
-  var recordLocation = TypeSheet.getRecordLocationInTable(table, recordId);
-  
-  if (recordLocation === false) {
-    return API.createResultObject(false, 404, 'A record with the id  '+ recordId + ' cannot be found in ' + postData.table + ' table');
-  }
-  
-  var rowToUpdate = tableDef.columns.map(function(column) {
-    var lowercaseColumnName = column.name.toLowerCase();
-    var dataToReturn = recordToUpdate[lowercaseColumnName] ? recordToUpdate[lowercaseColumnName] : '';
-    return dataToReturn;
-  })
-  
-  table.getRange(recordLocation, 1, 1, rowToUpdate.length).setValues([rowToUpdate]);
-  
-  return API.createResultObject(true, 200, 'Successfully updated record with the id  '+ recordId + ' in ' + postData.table + ' table', postData);
-}
-
-function processDeleteOperation (postData) {
-  //TODO: This should go in DeleteController.ts
-  //Think about moving some of this up to HTTPController.validateRequest
-  var tableName = postData.table;
-  var table = TypeSheet.getTableByName(tableName);
-  var recordToDelete = postData.record;
-  var recordId = recordToDelete.id; 
-  if (!recordId) {
-    return API.createResultObject(false, 500, 'You must supply an id as a part of the record you wish to delete');
-  }
-  var recordLocation = TypeSheet.getRecordLocationInTable(table, recordId);
-  
-  if (recordLocation === false) {
-    return API.createResultObject(false, 500, 'A record with the id  '+ recordId + ' cannot be found in ' + postData.table + ' table');
-  }
-  table.deleteRow(recordLocation)
-  return API.createResultObject(true, 200, 'Successfully deleted record with the id  '+ recordId + ' in ' + postData.table + ' table', postData);
 }
