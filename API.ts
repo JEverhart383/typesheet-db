@@ -14,13 +14,13 @@ export default class API {
   static sendResponseAsHTML (fileLocation:string = 'docs') : GoogleAppsScript.HTML.HtmlOutput {
     return HtmlService.createTemplateFromFile(fileLocation).evaluate();
   }
-  static createResultObject(success: boolean, status: number, message: string, data:any = null ): APIResult {
+  static createResultObject(success: boolean, statusCode: number, message: string, data:any = null ): APIResult {
     return {
-      success: success, 
-      statusCode: status, 
-      message: message, 
-      data: data
-    };  
+      success,
+      statusCode,
+      message,
+      data
+    };
   }
   static sendSuccessResponse (message:string, data = []) {
     return API.sendResponseAsJSON(API.createResultObject(true, 200, message, data))

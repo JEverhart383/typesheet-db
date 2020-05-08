@@ -10,6 +10,7 @@ export default class TypeSheet {
       return table; 
       
     } catch (err) {
+      //Throw an error here if table doesn't exist
       Logger.log(err)
     }
   

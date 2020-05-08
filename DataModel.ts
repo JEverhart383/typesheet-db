@@ -1,4 +1,7 @@
 export default class DataModel {
+  //make these all instance methods
+  //we store the current model on instantiation 
+  //add methods to help map the JSON data model to Spreadsheet arrays
   static setMasterProps (jsonMasterProps) {
     try {
       const props = PropertiesService.getScriptProperties();

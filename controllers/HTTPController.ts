@@ -1,6 +1,7 @@
 import API from '../API'
 import GetController from './GetContoller'
 import PostController from './PostController'
+import DeleteController from './DeleteController'
 import TypeSheet from '../TypeSheet'
 import DataModel from '../DataModel'
 
@@ -31,7 +32,6 @@ export default class HTTPController {
       }
 
       if (this.httpMethod === 'POST') {
-        //TODO: Examine operation
         let response = null;
         switch (this.postData.operation.toLowerCase()) {
           case 'create':
@@ -42,7 +42,8 @@ export default class HTTPController {
             response =  processUpdateOperation(this.postData);
             break;
           case 'delete':
-            response =  processDeleteOperation(this.postData);
+            const deleteController = new DeleteController(this.httpEvent, this.postData)
+            response =  deleteController.processRequest()
             break;
         }
         return response;

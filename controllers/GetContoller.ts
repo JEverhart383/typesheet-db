@@ -9,6 +9,8 @@ export default class GetController {
   }
 
   processRequest() {
+    //TODO: think about this pattern, new TypeSheet(table)
+    //const items = TypeSheet.getTypes(parameters)
     var table = TypeSheet.getTableByName(this.table); 
     var tableValues = TypeSheet.getTableValuesAsJSON(table);
     var filteredValues = TypeSheet.filterTablesByParams(this.parameters, tableValues);
