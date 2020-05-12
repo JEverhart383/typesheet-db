@@ -1,6 +1,7 @@
 import API from './API'
 import TypeSheet from './TypeSheet'
 import DataModel from './DataModel'
+import UiService from './services/UiService';
 
 
 /********
@@ -51,6 +52,7 @@ function doGet (e) {
 }
 
 function doPost (e) {
+  Logger.log(e.postData)
   return API.processRequest('POST', e)
 }
 /********
@@ -81,6 +83,11 @@ The basic data model will look something like this:
 }
 
 ********/
+
+function callUiService(callable: string, data: any) {
+  const uiService = new UiService(callable, data)
+  return uiService.delegate()
+}
 
 function getDataModel () {
   return DataModel.getMasterPropsAsJSON();

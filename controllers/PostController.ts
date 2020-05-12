@@ -22,7 +22,7 @@ export default class PostController {
       return API.sendBadRequestErrorResponse(`The specified table doesn't exist in your data model. Add it to perform create, update, and delete operations.`)
     }
     const table = TypeSheet.getTableByName(this.table);
-    const rowToAdd = tableDef.columns.map(function(column) {
+    const rowToAdd = tableDef.columns.map( column => {
       var columnName = column.name.toLowerCase();
       if (columnName === 'id') {
         return Helper.createUUID();

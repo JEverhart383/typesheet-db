@@ -20,8 +20,8 @@
     computed: {
     },
     created: function () {
-      google.script.run.withSuccessHandler(this.loadExistingDataModel).getDataModel()
-      google.script.run.withSuccessHandler(this.loadBaseURL).getPublicURL()
+      google.script.run.withSuccessHandler(this.loadExistingDataModel).callUiService('getDataModel')
+      google.script.run.withSuccessHandler(this.loadBaseURL).callUiService('getPublicUrl')
     },
     mounted: function () {
       var elems = document.querySelectorAll('.collapsible');

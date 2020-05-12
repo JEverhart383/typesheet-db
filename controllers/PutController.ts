@@ -27,7 +27,7 @@ export default class PutController {
       return API.sendNotFoundResponse(`A record with the id ${this.data.id} cannot be found in ${this.table} table`)
     }
     
-    const rowToUpdate = tableDef.columns.map(function(column) {
+    const rowToUpdate = tableDef.columns.map(column =>{
       let columnName = column.name.toLowerCase();
       return this.data[columnName] ? this.data[columnName] : '';
     })
