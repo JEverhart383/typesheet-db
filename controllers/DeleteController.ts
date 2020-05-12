@@ -23,10 +23,10 @@ export default class DeleteController {
     const recordLocation = TypeSheet.getRecordLocationInTable(table, this.data.id);
     
     if (recordLocation === -1) {
-      return API.sendNotFoundResponse('A record with the id  '+ this.data.id + ' cannot be found in ' + this.table + ' table')
+      return API.sendNotFoundResponse(`A record with the id ${this.data.id} cannot be found in ${this.table} table`)
     }
     table.deleteRow(recordLocation)
 
-    return API.sendSuccessResponse('Successfully deleted record with the id  '+ this.data.id + ' in ' + this.table + ' table', this.data)
+    return API.sendSuccessResponse(`Successfully deleted record with the id  ${this.data.id} in ${this.table} table`, this.data)
   }
 }
