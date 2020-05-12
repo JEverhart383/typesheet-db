@@ -18,6 +18,6 @@ export default class GetController {
     var table = TypeSheet.getTableByName(this.table); 
     var tableValues = TypeSheet.getTableValuesAsJSON(table);
     var filteredValues = TypeSheet.filterTablesByParams(this.parameters, tableValues);
-    return API.sendSuccessResponse(`Successfully read ${filteredValues.length} record from '${this.table}' table`, filteredValues)
+    return API.sendSuccessResponse(`Successfully read ${filteredValues.length} record${filteredValues.length > 1 || filteredValues.length === 0 ? 's' : ''} from '${this.table}' table`, filteredValues)
   }
 }
