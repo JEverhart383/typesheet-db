@@ -34,15 +34,15 @@ export default class HTTPController {
         let response = null;
         switch (this.postData.operation.toLowerCase()) {
           case 'create':
-            const postController = new PostController(this.httpEvent, this.postData)
+            const postController = new PostController(this.postData)
             response = postController.processRequest()
             break;
           case 'update':
-            const putController = new PutController(this.httpEvent, this.postData)
+            const putController = new PutController(this.postData)
             response =  putController.processRequest()
             break;
           case 'delete':
-            const deleteController = new DeleteController(this.httpEvent, this.postData)
+            const deleteController = new DeleteController(this.postData)
             response =  deleteController.processRequest()
             break;
         }

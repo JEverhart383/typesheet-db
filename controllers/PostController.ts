@@ -6,11 +6,9 @@ import Helper from '../Helper'
 export default class PostController {
   private table:string;
   private data: any;
-  private httpEvent: any;
-  constructor(httpEvent: any, postData:any) {
+  constructor(postData:any) {
     this.table = postData.table
     this.data = postData.data
-    this.httpEvent = httpEvent
   }
 
    processRequest () {
