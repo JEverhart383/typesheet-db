@@ -1,4 +1,9 @@
+//TypeSheet should be our main coordination class for using the methods on 
+// DataModel and SheetsService to make changes to the underlying structure of the sheets
+
+
 export default class TypeSheet {
+  // refactor to sheets service
   static getTableByName(tableName: string): GoogleAppsScript.Spreadsheet.Sheet {
     try {
       var tables: GoogleAppsScript.Spreadsheet.Sheet[] = SpreadsheetApp.getActiveSpreadsheet().getSheets()    
@@ -66,13 +71,7 @@ export default class TypeSheet {
     
     if (arrayOfFilters.length > 0) {
       var filterToCheck = arrayOfFilters[0];
-      var filteredArray = arrayOfValues.filter(function(value){
-        if (value[filterToCheck.prop] === filterToCheck.value) {
-          return true;
-        } else {
-          return false; 
-        }
-      })
+      var filteredArray = arrayOfValues.filter(value => value[filterToCheck.prop] === filterToCheck.value)
       // remove filter we just used
       arrayOfFilters.shift();
       // if there are still filters to be checked, 

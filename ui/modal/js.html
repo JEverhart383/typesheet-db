@@ -1,17 +1,27 @@
 <script type="text/javascript">
-  const restfulSheets = new Vue({
-    el: '#restful-sheets',
+  const TypeSheetDB = new Vue({
+    el: '#typesheet-db',
     data: {
      newTable: {
        name: '',
        columns: []
      },
-     existingDataModel: null,
-     existingSheets: [],
-     selectedPanel: 'home',
+     tables: [],
+     currentView: 'home',
+     //TODO: rename to activeSheet
      selectedSheet: ''
     },
     methods: {
+     changeView(route, activeSheet) {
+      this.currentView = route
+      if (route === 'home') {
+        google.script.run.withSuccessHandler(this.getAllTablesSuccess).getAllTables()
+      } 
+      if (route === 'edit' || route === 'delete' || route === 'import') {
+        this.selectedSheet = activeSheet
+        google.script.run.setActiveTable(activeSheet)
+      }
+     },
      addColumnToNewTable: function () {
        let newColumn = {
          name: '',
@@ -28,38 +38,31 @@
      },
      loadExistingDataModel: function (data) {
        console.log(data)
-       this.existingDataModel = data
+       this.dataModel = data
      },
      getAllTablesSuccess: function (data) {
-       this.existingSheets = data
+       console.log(data)
+       this.sheets = data
      },
-     routeToHomePanel: function () {
-       this.selectedPanel = 'home'
-       google.script.run.withSuccessHandler(this.getAllTablesSuccess).getAllTables()
-     },
-     routeToAddTable: function () {
-       this.selectedPanel = 'add'
-     },
-     routeToEditTable: function (sheet) {
-       this.selectedPanel = 'edit'
-       this.selectedSheet = sheet
-       google.script.run.setActiveTable(sheet)
-     },
-     routeToDeleteTable: function (sheet) {
-       this.selectedPanel = 'delete'
-       this.selectedSheet = sheet
-       google.script.run.setActiveTable(sheet)
-     },
-     onSuccess: function (data) {
-      this.routeToHomePanel()
-      M.toast({html: data})
+     onSuccess: function (response) {
+       console.log(response)
+       if (response.updateVue === true) {
+        for(key in response.data) {
+          this[key] = response.data[key]
+        }
+       }
+
+       if(response.changeView && response.changeView !== null){
+        this.changeView(response.changeView)
+       }
+
+      M.toast({html: response.message})
      }
     },
     computed: {
     },
     created: function () {
-      google.script.run.withSuccessHandler(this.getAllTablesSuccess).getAllTables()
-      google.script.run.withSuccessHandler(this.loadExistingDataModel).getProperties()
+      google.script.run.withSuccessHandler(this.onSuccess).callUiService('getAllTables')
     }
   })
  </script>

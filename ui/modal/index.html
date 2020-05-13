@@ -8,10 +8,9 @@
     <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
   </head>
   <body>
-    <h1>Testing Modal</h1>
-     <div class="container" id="restful-sheets">
+     <div class="container" id="typesheet-db">
      <!-- Start Loading Spinner -->
-     <div v-if="existingSheets.length === 0">
+     <div v-if="tables.length === 0">
      Loading your tables...
        <div class="progress">
          <div class="indeterminate"></div>
@@ -21,20 +20,24 @@
      <p>Available at: <?= getPublicURL() ?></p>
      
      <!-- Include Home Panel -->
-     <?!= include('ui/modal/panels/home'); ?>
+     <?!= include('ui/modal/views/home'); ?>
      <!--End Include Home Panel -->
       
      <!--Start Include Add Panel -->
-     <?!= include('ui/modal/panels/add'); ?>
+     <?!= include('ui/modal/views/add'); ?>
     <!--End Include Add  Panel -->
       
     <!--Start Include Add Panel -->
-    <?!= include('ui/modal/panels/edit'); ?>
+    <?!= include('ui/modal/views/edit'); ?>
     <!--End Include Add  Panel -->
       
-    <!--Start Include Add Panel -->
-    <?!= include('ui/modal/panels/delete'); ?>
-    <!--End Include Add  Panel -->
+    <!--Start Include DELETE Panel -->
+    <?!= include('ui/modal/views/delete'); ?>
+    <!--End Include DELETE  Panel -->
+
+    <!--Start Include IMPORT Panel -->
+    <?!= include('ui/modal/views/import'); ?>
+    <!--End Include IMPORT  Panel -->
      
      
      </div>

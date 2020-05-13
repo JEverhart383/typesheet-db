@@ -1,5 +1,5 @@
       <!--Start Add Panel -->
-      <div class="row" v-if="selectedPanel === 'add'">
+      <div class="row" v-if="currentView === 'add'">
         <div>
         <h5>Add Table</h5>
         <div class="input-field">
@@ -36,7 +36,7 @@
        
        <hr>
        <button class="waves-effect waves-light btn" @click="addTable()"><i class="material-icons left">add</i>Add Table</button>
-        <a class="waves-effect waves-teal btn-flat" @click="routeToHomePanel()"><i class="material-icons left">cancel</i>Cancel</a>
+        <a class="waves-effect waves-teal btn-flat" @click="changeView('home')"><i class="material-icons left">cancel</i>Cancel</a>
       </div>
       </div>
      <!--End Add Panel -->

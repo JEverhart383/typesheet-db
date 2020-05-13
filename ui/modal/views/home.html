@@ -1,0 +1,40 @@
+     <!--Start Home Panel -->
+     <div class="row" v-if="currentView === 'home'">
+      <div class="col s12">
+      <!-- Modal Trigger -->
+      <button class="waves-effect waves-light btn modal-trigger" @click="changeView('add')"><i class="material-icons left">add</i>Add Table</button>
+      <div>
+        <!-- TODO: update to use tables -->
+        <div class="card-panel" v-if="tables.length > 0" v-for="table in tables">
+          <div class="card-content">
+            <div class="card-title">
+              <h4>{{table.name}}</h4>
+              <div v-if="table.synced"><i class="material-icons left">cloud_done</i> Synced</div>
+              <div v-if="!table.synced"><i class="material-icons left">cloud_off</i> Not Synced</div>
+              <table v-if="table.synced">
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th>Data Type</th>
+                    <th>Required</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr v-for="column in table.columns">
+                    <td>{{column.name}}</td>
+                    <td>{{column.type}}</td>
+                    <td>{{''}}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="card-action">
+              <a v-if="!table.synced" class="waves-effect waves-teal btn-flat btn-small" @click="changeView('import', table.name)"><i class="material-icons left">import_export</i>Import</a>
+              <a v-if="table.synced" class="waves-effect waves-teal btn-flat btn-small" @click="changeView('edit', table.name)"><i class="material-icons left">edit</i>Edit</a>
+              <a class="waves-effect waves-teal btn-flat btn-small" @click="changeView('add', table.name)"><i class="material-icons left">delete</i>Delete</a>
+            </div>
+          </div>
+        </div>
+      </div>
+      </div>
+    </div>

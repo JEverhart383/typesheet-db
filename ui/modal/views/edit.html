@@ -1,0 +1,9 @@
+<!--Start Edit Panel -->
+<div class="row" v-if="currentView === 'edit'">
+  <div class="col s12">
+   <h5>Edit Table</h5>
+   {{selectedSheet}}
+   <a class="waves-effect waves-teal btn-flat" @click="changeView('home')"><i class="material-icons left">cancel</i>Cancel</a>
+   </div>
+ </div>
+<!--End Edit Panel -->
