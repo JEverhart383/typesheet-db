@@ -1,9 +1,9 @@
 <!--Start Delete Panel -->
 <div class="row" v-if="currentView === 'delete'">
   <div class="col s12">
-  <h5>Delete Table</h5>
-    <p>Are you sure you want to delete {{selectedSheet}}? Once you do this, the sheet and all of its data will be gone forever.</p>
-    <button class="waves-effect waves-light btn red darken-1" @click="deleteTable(selectedSheet)"><i class="material-icons left">delete</i>Delete Table</button>
+  <h5>Delete Table '{{activeSheet}}'</h5>
+    <p>Are you sure you want to delete {{activeSheet}}? Once you do this, the sheet and all of its data will be gone forever.</p>
+    <button class="waves-effect waves-light btn red darken-1" @click="deleteTable(activeSheet)"><i class="material-icons left">delete</i>Delete Table</button>
     <a class="waves-effect waves-teal btn-flat" @click="changeView('home')"><i class="material-icons left">cancel</i>Cancel</a>
   </div>
 </div>

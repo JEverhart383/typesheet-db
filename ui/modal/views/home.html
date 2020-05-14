@@ -11,27 +11,28 @@
               <h4>{{table.name}}</h4>
               <div v-if="table.synced"><i class="material-icons left">cloud_done</i> Synced</div>
               <div v-if="!table.synced"><i class="material-icons left">cloud_off</i> Not Synced</div>
-              <table v-if="table.synced">
-                <thead>
-                  <tr>
-                    <th>Name</th>
-                    <th>Data Type</th>
-                    <th>Required</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr v-for="column in table.columns">
-                    <td>{{column.name}}</td>
-                    <td>{{column.type}}</td>
-                    <td>{{''}}</td>
-                  </tr>
-                </tbody>
-              </table>
+                <table v-if="table.synced">
+                  <thead>
+                    <tr>
+                      <th>Name</th>
+                      <th>Data Type</th>
+                      <th>Required</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr v-for="column in table.columns">
+                      <td>{{column.name}}</td>
+                      <td>{{column.type}}</td>
+                      <td>{{''}}</td>
+                    </tr>
+                  </tbody>
+                </table>
+                <p v-if="!table.synced">Import your existing or handmade table to define a data schema. With a data schema you can create, update, and delete records using the API and connect your API to data pipes to other G Suite services.</p>
             </div>
             <div class="card-action">
               <a v-if="!table.synced" class="waves-effect waves-teal btn-flat btn-small" @click="changeView('import', table.name)"><i class="material-icons left">import_export</i>Import</a>
               <a v-if="table.synced" class="waves-effect waves-teal btn-flat btn-small" @click="changeView('edit', table.name)"><i class="material-icons left">edit</i>Edit</a>
-              <a class="waves-effect waves-teal btn-flat btn-small" @click="changeView('add', table.name)"><i class="material-icons left">delete</i>Delete</a>
+              <a class="waves-effect waves-teal btn-flat btn-small" @click="changeView('delete', table.name)"><i class="material-icons left">delete</i>Delete</a>
             </div>
           </div>
         </div>

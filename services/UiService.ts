@@ -37,13 +37,31 @@ export default class UiService {
     const dataModel = DataModel.getMasterPropsAsJSON();
     const sheets = SheetsService.getAllTableNames();
     const tables = sheets.map(sheet => {
+      const tableKey = sheet.toLowerCase()
       return {
         name: sheet,
-        synced: dataModel.tables[sheet] ? true : false,
-        columns: dataModel.tables[sheet] ? dataModel.tables[sheet].columns : []
+        synced: dataModel.tables[tableKey] ? true : false,
+        columns: dataModel.tables[tableKey] ? dataModel.tables[tableKey].columns : []
       }
     })
 
-    return UiService.formatResponse({tables}, null, true)
+    return UiService.formatResponse({tables}, null, true, `✅ Loaded ${tables.length} table${tables.length === 0 || tables.length > 1 ? 's': '' }`)
+  }
+
+  addTableToSpreadsheet (newTable: any) {
+    SheetsService.addTableToSpreadsheet(newTable);
+    DataModel.updateMasterPropsAndSave(newTable);
+    return UiService.formatResponse(newTable, 'home', false, `✅ Added table ${newTable.name}`)
+  }
+
+  deleteTable(tableName:string) {
+    SheetsService.deleteTable(tableName);
+    DataModel.deleteTableFromMasterProps(tableName);
+    return UiService.formatResponse(null, 'home', false, `❌ Deleted table ${tableName}`)
+  }
+
+  setActiveTable(tableName:string) {
+    SheetsService.setActiveTable(tableName)
+    return UiService.formatResponse(null, null, false)
   }
 }

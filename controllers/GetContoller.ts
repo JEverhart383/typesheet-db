@@ -10,6 +10,8 @@ export default class GetController {
   }
 
   processRequest() {
+    // TODO: All of this should be refactored into TypeSheet class, and processRequest should just
+    // call one method on TypeSheet, which calls both SheetsService and DataModel
     if (this.table === 'dataModel') {
       return API.sendSuccessResponse(`Returned data model`, DataModel.getMasterPropsAsJSON())
     }

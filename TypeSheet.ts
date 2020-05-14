@@ -41,7 +41,7 @@ export default class TypeSheet {
     const jsonValues = rows.map(function(row) {
       let jsonValue = {}
       row.forEach(function(value, index) {
-        let key = headers[index].split('::')[0].toLowerCase();
+        let key = headers[index].toLowerCase();
         jsonValue[key] = value;
       })
       return jsonValue

@@ -9,17 +9,17 @@
      tables: [],
      currentView: 'home',
      //TODO: rename to activeSheet
-     selectedSheet: ''
+     activeSheet: ''
     },
     methods: {
      changeView(route, activeSheet) {
       this.currentView = route
       if (route === 'home') {
-        google.script.run.withSuccessHandler(this.getAllTablesSuccess).getAllTables()
+        google.script.run.withSuccessHandler(this.onSuccess).callUiService('getAllTables')
       } 
       if (route === 'edit' || route === 'delete' || route === 'import') {
-        this.selectedSheet = activeSheet
-        google.script.run.setActiveTable(activeSheet)
+        this.activeSheet = activeSheet
+        google.script.run.withSuccessHandler(this.onSuccess).callUiService('setActiveSheet', activeSheet)
       }
      },
      addColumnToNewTable: function () {
@@ -30,11 +30,20 @@
         }
         this.newTable.columns.push(newColumn)
      },
-     addTable: function () {
-       google.script.run.withSuccessHandler(this.onSuccess).addTableToSpreadsheet(this.newTable)
+     addTableToSpreadsheet: function () {
+      this.newTable.columns = this.newTable.columns.map(column => {
+        delete column['state']
+        return column
+      })
+      google.script.run.withSuccessHandler(this.onSuccess).callUiService('addTableToSpreadsheet', this.newTable)
+      this.newTable = {
+        name: '',
+        columns: [],
+        required: false
+      }
      },
-     deleteTable: function (sheet) {
-       google.script.run.withSuccessHandler(this.onSuccess).deleteTable(sheet)
+     deleteTable: function (tableName) {
+      google.script.run.withSuccessHandler(this.onSuccess).callUiService('deleteTable', tableName)
      },
      loadExistingDataModel: function (data) {
        console.log(data)

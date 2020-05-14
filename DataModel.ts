@@ -3,6 +3,10 @@ export default class DataModel {
   //we store the current model on instantiation
   //add methods to help map the JSON data model to Spreadsheet arrays
   //add methods to typecast based on data model
+
+  //static validateRequest (data)
+  // this method will check all required fields and do some basic type coercion, pushing errors to an error array
+  // if there are errors, join and send a bad request response
   static setMasterProps (jsonMasterProps) {
     try {
       const props = PropertiesService.getScriptProperties();
@@ -14,26 +18,24 @@ export default class DataModel {
   static getMasterPropsAsJSON() {
     const props = PropertiesService.getScriptProperties()
     const returnedProps = props.getProperty('TypeSheetDB::MasterProps')
-    Logger.log(returnedProps)
     return returnedProps === null ? {tables:{}} : JSON.parse(returnedProps)
   }
   static updateMasterPropsAndSave(tableDef) {
     const masterProps = DataModel.getMasterPropsAsJSON(); 
-    var tableName = tableDef.name; 
-    masterProps.tables[tableName] = tableDef; 
+    const tableKey = tableDef.name.toLowerCase(); 
+    masterProps.tables[tableKey] = tableDef; 
     DataModel.setMasterProps(masterProps); 
     return DataModel.getMasterPropsAsJSON(); 
   }
   static deleteTableFromMasterProps(tableName) {
     const masterProps = DataModel.getMasterPropsAsJSON(); 
-    delete masterProps.tables[tableName]; 
+    delete masterProps.tables[tableName.toLowerCase()]; 
     DataModel.setMasterProps(masterProps); 
     return DataModel.getMasterPropsAsJSON(); 
   }
   static getTableDefinitionFromMasterProps(tableName) {
     var masterProps = DataModel.getMasterPropsAsJSON()
-    var tableDef = masterProps.tables[tableName]
-    return tableDef
+    return masterProps.tables[tableName.toLowerCase()]
   }
 
 }

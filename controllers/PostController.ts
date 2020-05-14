@@ -12,6 +12,8 @@ export default class PostController {
   }
 
    processRequest () {
+     // TODO: All of this should be refactored into TypeSheet class, and processRequest should just
+    // call one method on TypeSheet, which calls both SheetsService and DataModel
     const tableDef = DataModel.getTableDefinitionFromMasterProps(this.table)
     //TODO: Deal with this later, but there is a philospical underpinning here that needs to be examined.
     //Namely, do we add items using the data model we can extract from the spreadsheet in a flexible way,

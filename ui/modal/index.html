@@ -11,13 +11,12 @@
      <div class="container" id="typesheet-db">
      <!-- Start Loading Spinner -->
      <div v-if="tables.length === 0">
-     Loading your tables...
+        <p>Loading your tables...</p>
        <div class="progress">
          <div class="indeterminate"></div>
        </div>
      </div>
      <!-- End Loading Spinner -->
-     <p>Available at: <?= getPublicURL() ?></p>
      
      <!-- Include Home Panel -->
      <?!= include('ui/modal/views/home'); ?>
@@ -45,6 +44,8 @@
 
      <?!= include('ui/modal/js'); ?>
   
+          <!-- End Loading Spinner -->
+          <p>Available at: <?= getPublicURL() ?></p>
   </body>
 </html>
 
