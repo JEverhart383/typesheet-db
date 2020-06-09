@@ -1,4 +1,9 @@
 export default class DataModel {
+
+  //TODO: Deal with this later, but there is a philospical underpinning here that needs to be examined.
+  //Namely, do we add items using the data model we can extract from the spreadsheet in a flexible way,
+  //or do we enforce consistency to provide more secure data; right now, we're favoring consistency 
+
   //make these all instance methods
   //we store the current model on instantiation
   //add methods to help map the JSON data model to Spreadsheet arrays
