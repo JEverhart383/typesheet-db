@@ -1,5 +1,7 @@
 # TypeSheetDB
 
+[![clasp](https://img.shields.io/badge/built%20with-clasp-4285f4.svg)](https://github.com/google/clasp)
+
 TypeSheetDB is a helpful layer of TypeScript goodness that turns a good ol' Google Sheet into a reliable and consistent database management system and API. By providing an opinionated framework for how applications can interact with your data, you can make fields required, ensure type consistency, and enforce unique primary keys.
 
 It's primary goal is to offer more consitency than other Sheet-as-a-Database services or libraries by assuming that you are using TypeSheetDB to create an application as the primary means of working with data. You can still do some amount of data management via the spreadsheet interface, but API operations give you the most consistency. 

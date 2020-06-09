@@ -5,11 +5,11 @@ export default class API {
      const lock = LockService.getScriptLock()
      lock.waitLock(30000)
      const httpController = new HTTPController(method, event)
+     lock.releaseLock()
      return httpController.processHTTPRequest()
-     lock.releaseLock();
   }
-  static sendResponseAsJSON (result): GoogleAppsScript.Content.TextOutput {
-    return ContentService.createTextOutput(JSON.stringify(result)).setMimeType(ContentService.MimeType.JSON)
+  static sendResponseAsJSON (apiResult: APIResult): GoogleAppsScript.Content.TextOutput {
+    return ContentService.createTextOutput(JSON.stringify(apiResult)).setMimeType(ContentService.MimeType.JSON)
   }
   static sendResponseAsHTML (fileLocation:string = 'ui/web-app/index') : GoogleAppsScript.HTML.HtmlOutput {
     return HtmlService.createTemplateFromFile(fileLocation).evaluate();
