@@ -8,7 +8,6 @@
       <input id="table_name" v-model="activeSheet.name" type="text">
       <span class="helper-text">All parts of a table's data schema will be lowercased to help with normalization, so 'People' and 'people' will be considered equivelent. Names must be valid JSON keys.</span>
    </div>
-   <p>All objects will be given a column labeled "ID" that will be automatically populated with a GUID on creation.</p>
     <ul class="collection">
       <li class="collection-item avatar" v-for="(column, index) in activeSheet.columns">
           <i class="material-icons circle" v-if="column.state === 'saved'">#</i>

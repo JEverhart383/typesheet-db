@@ -1,6 +1,6 @@
 import API from '../API'
-import TypeSheet from '../TypeSheet'
 import DataModel from '../DataModel'
+import SheetsService from '../services/SheetsService'
 import Helper from '../Helper'
 
 export default class PostController {
@@ -21,7 +21,7 @@ export default class PostController {
     if (!tableDef) {
       return API.sendBadRequestErrorResponse(`The specified table doesn't exist in your data model. Add it to perform create, update, and delete operations.`)
     }
-    const table = TypeSheet.getTableByName(this.table);
+    const table = SheetsService.getTableByName(this.table);
     const rowToAdd = tableDef.columns.map( column => {
       var columnName = column.name.toLowerCase();
       if (columnName === 'id') {

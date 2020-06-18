@@ -2,35 +2,11 @@
 // DataModel and SheetsService to make changes to the underlying structure of the sheets
 
 
+//This class should have the following methods
+//deleteRecord, getRecords, createRecord, updateRecord
+//createTable, updateTable, importTable, getTables, getTableByName
+
 export default class TypeSheet {
-  // refactor to sheets service
-  static getTableByName(tableName: string): GoogleAppsScript.Spreadsheet.Sheet {
-    try {
-      var tables: GoogleAppsScript.Spreadsheet.Sheet[] = SpreadsheetApp.getActiveSpreadsheet().getSheets()    
-      var filteredTables = tables.filter(function(table){
-        return (table.getName().toLowerCase() === tableName.toLowerCase())
-      })
-      
-      var table = filteredTables[0];
-      return table; 
-      
-    } catch (err) {
-      //Throw an error here if table doesn't exist
-      Logger.log(err)
-    }
-  
-  }
-  static getRecordLocationInTable (table: GoogleAppsScript.Spreadsheet.Sheet, id:string): any {
-    //TODO: Update this method to return recordLocation as number
-    var lastRow = table.getLastRow();
-    var idValues = table.getRange(1, 1, lastRow).getValues().map(function(cell){ return cell[0]});
-    Logger.log(idValues);
-    var recordLocation = idValues.indexOf(id)
-    if (recordLocation === -1) {
-      return -1;
-    }
-    return recordLocation + 1;
-  }
   static getTableValuesAsArray (table: GoogleAppsScript.Spreadsheet.Sheet ): any[] {
     var allValues = table.getDataRange().getValues(); 
     return allValues;

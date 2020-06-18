@@ -60,8 +60,8 @@ export default class UiService {
     return UiService.formatResponse(null, 'home', false, `❌ Deleted table ${tableName}`)
   }
 
-  setActiveTable(tableName:string) {
-    SheetsService.setActiveTable(tableName)
-    return UiService.formatResponse(null, null, false)
+  setActiveSheet(tableName:string) {
+    const activeSheet = SheetsService.setActiveTable(tableName)
+    return UiService.formatResponse({activeSheet}, null, true, `✅ Loaded data from table ${tableName}`)
   }
 }

@@ -1,6 +1,7 @@
 import API from '../API'
-import TypeSheet from '../TypeSheet'
+import SheetsService from '../services/SheetsService'
 import DataModel from '../DataModel'
+import TypeSheet from '../TypeSheet'
 export default class GetController {
   private table: string = null
   private parameters: any = null
@@ -17,7 +18,7 @@ export default class GetController {
     }
     //TODO: think about this pattern, new TypeSheet(table)
     //const items = TypeSheet.getTypes(parameters)
-    var table = TypeSheet.getTableByName(this.table); 
+    var table = SheetsService.getTableByName(this.table); 
     var tableValues = TypeSheet.getTableValuesAsJSON(table);
     var filteredValues = TypeSheet.filterTablesByParams(this.parameters, tableValues);
     return API.sendSuccessResponse(`Successfully read ${filteredValues.length} record${filteredValues.length > 1 || filteredValues.length === 0 ? 's' : ''} from '${this.table}' table`, filteredValues)

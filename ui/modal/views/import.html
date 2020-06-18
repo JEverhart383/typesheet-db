@@ -2,7 +2,49 @@
 <div class="row" v-if="currentView === 'import'">
   <div class="col s12">
    <h5>Import Table</h5>
-   {{selectedSheet}}
+   {{activeSheet.name}}
+   <p>All objects will be given a column labeled "ID" that will be automatically populated with a GUID on creation.</p>
+   <ul class="collection">
+     <li class="collection-item avatar" v-for="(column, index) in activeSheet.columns">
+         <i class="material-icons circle" v-if="column.state === 'saved'">#</i>
+         <div class="input-field col s12" v-if="column.state === 'editing'">
+           <label :for="'column' + index">Column Name</label>
+           <br>
+           <br>
+           <input :id="'column' + index" :name="'column' + index" type="text" v-model="column.name">
+         </div>
+         <div class="input-field col s12" v-if="column.state === 'editing'">
+           <label :for="'column' + index + 'Type'">Column Type</label>
+           <br>
+           <br>
+           <select class="browser-default" :name="'column' + index + 'Type'" v-model="column.type">
+             <option value="" disabled selected>Choose your data type</option>
+             <option value="String">String</option>
+             <option value="Integer">Integer</option>
+             <option value="Float">Float</option>
+             <option value="Datetime">Date</option>
+           </select>
+         </div>
+
+         <div class="input-field col s12" v-if="column.state === 'editing'">
+           <div class="switch">
+             <label>
+               Optional
+               <input type="checkbox" v-model="column.required">
+               <span class="lever"></span>
+               Required
+             </label>
+           </div>
+         </div>
+         <h5 class="title" v-if="column.state === 'saved'">Name: {{column.name}}</h5>
+         <p class="title" v-if="column.state === 'saved'">Type: {{column.type}}</p>
+         <p v-if="column.state === 'saved'">Required: {{column.required}}</p>
+         
+         <a class="waves-effect waves-teal btn-flat" v-if="column.state === 'saved' " @click="column.state = 'editing'"><i class="material-icons left">edit</i> Edit Column</a>
+         <a class="waves-effect waves-teal btn-flat" v-if="column.state === 'editing' " @click="column.state = 'saved' "><i class="material-icons left">save</i> Save Column</a>
+     </li>
+   </ul>
+
    <a class="waves-effect waves-teal btn-flat" @click="changeView('home')"><i class="material-icons left">cancel</i>Cancel</a>
    </div>
  </div>
