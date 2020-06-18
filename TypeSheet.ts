@@ -49,10 +49,7 @@ export default class TypeSheet {
     return jsonValues
   }
   static filterTablesByParams (parameters, valuesAsJSON) {
-    //remove table key
-    delete parameters['table'];
     var filters = [];
-    
     for (var key in parameters) {
       var filter = { prop: key, value: parameters[key] }
       filters.push(filter);
