@@ -48,6 +48,25 @@ export default class TypeSheet {
     return API.sendSuccessResponse(`Successfully created a record in the '${this.tableName}' table`, rowToAdd)
   }
 
+  public updateRecord () {
+    const tableDef = DataModel.getTableDefinitionFromMasterProps(this.tableName)
+    if (!tableDef) {
+      return API.sendBadRequestErrorResponse(`The specified table doesn't exist in your data model. Add it to perform create, update, and delete operations.`)
+    }
+    const table = SheetsService.getTableByName(this.tableName)
+    const recordLocation = SheetsService.getRecordLocationInTable(table, this.payload.id)
+    
+    if (recordLocation === -1) {
+      return API.sendNotFoundResponse(`A record with the id ${this.payload.id} cannot be found in ${this.tableName} table`)
+    }
+    const rowToUpdate = tableDef.columns.map(column =>{
+      let columnName = column.name.toLowerCase()
+      return this.payload[columnName] ? this.payload[columnName] : ''
+    })
+    table.getRange(recordLocation, 1, 1, rowToUpdate.length).setValues([rowToUpdate])
+    return API.sendSuccessResponse(`Successfully updated record with the id ${this.payload.id} in ${this.tableName} table`, this.payload)
+  }
+  
   public deleteRecord () {
     const tableDef = DataModel.getTableDefinitionFromMasterProps(this.tableName)
     if (!tableDef) {
