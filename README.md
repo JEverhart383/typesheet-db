@@ -10,6 +10,9 @@ You can still go off the rails and use most of the features pretty much zero con
 
 But TypeSheetDB does a few other things for you as well:
 
+## User-friendly GUI
+
+We use the Google Sheets interface to create some helpful menus to work with your data. You can get all of the benefit on having an API for your app while not needing to use it yourself to manage data.
 
 ## Client-side JavaScript SDK
 
@@ -17,11 +20,7 @@ If you don't want to connect to your TypeSheetDB from another backend service, y
 
 ## Data Pipes
 
-As you create your data model in Google Sheets, you can specify different data pipelines to run when certain records are created, modified, or deleted: create a PDF from every new record and email that to someone, geocode a Lat/Lng to an address using Google Maps, or write your own function using Google Apps Script
-
-## User-friendly GUI
-
-We use the Google Sheets interface to create some helpful menus to work with your data. You can get all of the benefit on having an API for your app while not needing to use it yourself to manage data. 
+As you create your data model in Google Sheets, you can specify different data pipelines to run when certain records are created, modified, or deleted: create a PDF from every new record and email that to someone, geocode a Lat/Lng to an address using Google Maps, or write your own function using Google Apps Script.
 
 ## Getting Started
 

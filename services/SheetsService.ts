@@ -21,6 +21,10 @@ export default class SheetsService {
   
   }
 
+  static getTableValuesAsArray (table: GoogleAppsScript.Spreadsheet.Sheet ): any[] {
+    return table.getDataRange().getValues(); 
+  }
+
   static getRecordLocationInTable (table: GoogleAppsScript.Spreadsheet.Sheet, id:string): any {
     //TODO: Update this method to return recordLocation as number
     var lastRow = table.getLastRow();
