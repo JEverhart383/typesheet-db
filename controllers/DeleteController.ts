@@ -1,5 +1,5 @@
 import API from '../API'
-import TypeSheet from '../TypeSheet'
+import SheetsService from '../services/SheetsService'
 import DataModel from '../DataModel';
 
 export default class DeleteController {
@@ -21,8 +21,8 @@ export default class DeleteController {
     if (!tableDef) {
       return API.sendBadRequestErrorResponse(`The specified table doesn't exist in your data model. Add it to perform create, update, and delete operations.`)
     }
-    const table = TypeSheet.getTableByName(this.table);
-    const recordLocation = TypeSheet.getRecordLocationInTable(table, this.data.id);
+    const table = SheetsService.getTableByName(this.table);
+    const recordLocation = SheetsService.getRecordLocationInTable(table, this.data.id);
     
     if (recordLocation === -1) {
       return API.sendNotFoundResponse(`A record with the id ${this.data.id} cannot be found in ${this.table} table`)

@@ -11,7 +11,6 @@ export default class SheetsService {
       var filteredTables = tables.filter(function(table){
         return (table.getName().toLowerCase() === tableName.toLowerCase())
       })
-      
       var table = filteredTables[0];
       return table; 
       
@@ -33,7 +32,7 @@ export default class SheetsService {
     }
     return recordLocation + 1;
   }
-  
+
   static addTableToSpreadsheet (newTable): boolean {
     const table = SpreadsheetApp.getActiveSpreadsheet().insertSheet(newTable.name)
     newTable.columns.unshift({
