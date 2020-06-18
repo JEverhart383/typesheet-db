@@ -21,7 +21,7 @@ As you create your data model in Google Sheets, you can specify different data p
 
 ## User-friendly GUI
 
-We use the Google Sheets interface to create some helpful menus to work with your data.
+We use the Google Sheets interface to create some helpful menus to work with your data. You can get all of the benefit on having an API for your app while not needing to use it yourself to manage data. 
 
 ## Getting Started
 
