@@ -12,7 +12,7 @@ export default class TypeSheet {
     if (typeSheetRequest.tableName) this.tableName = typeSheetRequest.tableName
     if (typeSheetRequest.searchParameters) this.searchParameters = typeSheetRequest.searchParameters
     if (typeSheetRequest.payload) this.payload = typeSheetRequest.payload
-    this.dataModel = new DataModel(this.tableName)
+    this.dataModel = new DataModel(this.tableName, this.payload)
   }
   public methodBlueprint () {
     //pre data model stuff
@@ -40,17 +40,11 @@ export default class TypeSheet {
   public createRecord () {
     //TODO: add type validation, add required validation
     if (!this.dataModel.tableExists()) return API.sendBadRequestErrorResponse(DataModelValidationErrorMessages.TABLE_DOES_NOT_EXIST)
-
+    if (!this.dataModel.requiredFieldsPresent()) return API.sendBadRequestErrorResponse(DataModelValidationErrorMessages.MISSING_REQUIRED_FIELD)
+    if (!this.dataModel.allTypesCoerced()) return API.sendBadRequestErrorResponse(DataModelValidationErrorMessages.TYPE_ERROR)
+    
     const table = SheetsService.getTableByName(this.tableName);
-
-    //TODO: consider whether this could be a DataModel method, like mapPayloadToColumns
-    const rowToAdd = this.dataModel.getTableDefinition().columns.map( column => {
-      var columnName = column.name.toLowerCase();
-      if (columnName === 'id') {
-        return Helper.createUUID();
-      }
-      return this.payload[columnName] ? this.payload[columnName] : '';
-    })
+    const rowToAdd = this.dataModel.processPayloadForInsert()
     table.appendRow(rowToAdd)
     return API.sendSuccessResponse(`Successfully created a record in the '${this.tableName}' table`, rowToAdd)
   }
@@ -61,14 +55,11 @@ export default class TypeSheet {
     const table = SheetsService.getTableByName(this.tableName)
     const recordLocation = SheetsService.getRecordLocationInTable(table, this.payload.id)
     
-    if (recordLocation === -1) {
-      return API.sendNotFoundResponse(`A record with the id ${this.payload.id} cannot be found in ${this.tableName} table`)
-    }
-    //TODO: consider whether this could be a DataModel method, like mapPayloadToColumns
-    const rowToUpdate = this.dataModel.getTableDefinition().columns.map(column =>{
-      let columnName = column.name.toLowerCase()
-      return this.payload[columnName] ? this.payload[columnName] : ''
-    })
+    if (recordLocation === -1) return API.sendNotFoundResponse(DataModelValidationErrorMessages.RECORD_NOT_FOUND)
+    if (!this.dataModel.requiredFieldsPresent()) return API.sendBadRequestErrorResponse(DataModelValidationErrorMessages.MISSING_REQUIRED_FIELD)
+    if (!this.dataModel.allTypesCoerced()) return API.sendBadRequestErrorResponse(DataModelValidationErrorMessages.TYPE_ERROR)
+    
+    const rowToUpdate = this.dataModel.processPayloadForUpdate()
     table.getRange(recordLocation, 1, 1, rowToUpdate.length).setValues([rowToUpdate])
     return API.sendSuccessResponse(`Successfully updated record with the id ${this.payload.id} in ${this.tableName} table`, this.payload)
   }
@@ -77,9 +68,8 @@ export default class TypeSheet {
     if (!this.dataModel.tableExists()) return API.sendBadRequestErrorResponse(DataModelValidationErrorMessages.TABLE_DOES_NOT_EXIST)
     const table = SheetsService.getTableByName(this.tableName)
     const recordLocation = SheetsService.getRecordLocationInTable(table, this.payload.id)
-    if (recordLocation === -1) {
-      return API.sendNotFoundResponse(`A record with the id ${this.payload.id} cannot be found in ${this.tableName} table`)
-    }
+    if (recordLocation === -1) return API.sendNotFoundResponse(DataModelValidationErrorMessages.RECORD_NOT_FOUND)
+
     table.deleteRow(recordLocation)
     return API.sendSuccessResponse(`Successfully deleted record with the id  ${this.payload.id} in ${this.tableName} table`, this.payload)
   }
@@ -118,5 +108,7 @@ interface Payload {
 
 enum DataModelValidationErrorMessages {
   TABLE_DOES_NOT_EXIST = `The specified table doesn't exist in your data model. Add it to perform create, update, and delete operations.`,
-
+  RECORD_NOT_FOUND = `A record with the specified id cannot be found in specified table`,
+  MISSING_REQUIRED_FIELD = `The payload is missing one or more required fields`,
+  TYPE_ERROR = `There was an error converting one or more fields to the type specified by the data model`
 }

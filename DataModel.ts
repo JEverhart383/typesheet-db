@@ -1,3 +1,5 @@
+import Helper from "./Helper"
+
 export default class DataModel {
 
   //TODO: Deal with this later, but there is a philospical underpinning here that needs to be examined.
@@ -16,8 +18,24 @@ export default class DataModel {
   //TODO: consider another class here, and maybe this is all in DataModel
   //createTable, updateTable, importTable, getTables, getTableByName
   private tableDefinition = null
-  constructor(tableName) {
+  private payload = null
+  private requiredErrors = []
+  private typeErrors = []
+  constructor(tableName, payload) {
     this.tableDefinition = DataModel.getTableDefinitionFromMasterProps(tableName)
+    this.ingestPayload(payload)
+  }
+  private ingestPayload(payload) {
+    //TODO: All of this function needs to be written, basically a series of try/catch as we loop through
+    //all of the properties and test if they are required and typecast them, adding to error arrays if we catch errors
+    this.payload = payload
+  }
+  public requiredFieldsPresent(){
+    return this.requiredErrors.length > 0 ? false : true
+  }
+
+  public allTypesCoerced(){
+    return this.typeErrors.length > 0 ? false : true
   }
   public tableExists():boolean {
     return this.tableDefinition ? true : false
@@ -28,6 +46,25 @@ export default class DataModel {
   }
   public getTableDefinition() {
     return this.tableDefinition
+  }
+
+  public processPayloadForInsert(){
+    const rowToAdd = this.tableDefinition.columns.map( column => {
+      var columnName = column.name.toLowerCase();
+      if (columnName === 'id') {
+        return Helper.createUUID();
+      }
+      return this.payload[columnName] ? this.payload[columnName] : '';
+    })
+    return rowToAdd
+  }
+
+  public processPayloadForUpdate(){
+    const rowToUpdate = this.tableDefinition.columns.map(column =>{
+      let columnName = column.name.toLowerCase()
+      return this.payload[columnName] ? this.payload[columnName] : ''
+    })
+    return rowToUpdate
   }
   static setMasterProps (jsonMasterProps) {
     try {
