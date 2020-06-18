@@ -7,17 +7,19 @@ import API from "./API";
 
 
 //This class should have the following methods
-//deleteRecord, getRecords, createRecord, updateRecord
+//deleteRecord, createRecord, updateRecord
 //createTable, updateTable, importTable, getTables, getTableByName
 //This might also work better as an instance class
 
 export default class TypeSheet {
   private tableName: string = null
   private searchParameters: object = null
+  private payload: object = null
   private dataModel: Object = null
-  constructor(tableName: string, searchParameters:object){
-    this.tableName = tableName
-    this.searchParameters = searchParameters
+  constructor(typeSheetRequest: TypeSheetRequest){
+    if (typeSheetRequest.tableName) this.tableName = typeSheetRequest.tableName
+    if (typeSheetRequest.searchParameters) this.searchParameters = typeSheetRequest.searchParameters
+    if (typeSheetRequest.payload) this.payload = typeSheetRequest.payload
     this.dataModel = DataModel.getMasterPropsAsJSON()
   }
 
@@ -52,15 +54,9 @@ export default class TypeSheet {
     var filters = [];
     
     for (var key in parameters) {
-      var filter = {
-        prop: null,
-        value: null
-      }
-      filter.prop = key;
-      filter.value = parameters[key]; 
-      filters.push(filter); 
+      var filter = { prop: key, value: parameters[key] }
+      filters.push(filter);
     }
-    
     return TypeSheet.recursiveFilterProcess(filters, valuesAsJSON); 
   }
   
@@ -83,4 +79,10 @@ export default class TypeSheet {
     }
     
   }
+}
+
+interface TypeSheetRequest {
+  tableName: string;
+  payload?: object;
+  searchParameters?: object;
 }
