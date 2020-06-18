@@ -1,6 +1,7 @@
 import SheetsService from "./services/SheetsService";
 import DataModel from "./DataModel";
 import API from "./API";
+import Helper from "./Helper";
 
 
 //This class should have the following methods
@@ -24,28 +25,36 @@ export default class TypeSheet {
     if (this.tableName === 'dataModel') {
       return API.sendSuccessResponse(`Returned data model`, DataModel.getMasterPropsAsJSON())
     }
-    //TODO: think about this pattern, new TypeSheet(table)
-    //const items = TypeSheet.getTypes(parameters)
-    var table = SheetsService.getTableByName(this.tableName); 
-    var tableValues = SheetsService.getTableValuesAsJSON(table);
-    var filteredValues = TypeSheet.filterTablesByParams(this.searchParameters, tableValues);
+    const table = SheetsService.getTableByName(this.tableName)
+    const tableValues = SheetsService.getTableValuesAsJSON(table)
+    const filteredValues = TypeSheet.filterTablesByParams(this.searchParameters, tableValues)
     return API.sendSuccessResponse(`Successfully read ${filteredValues.length} record${filteredValues.length > 1 || filteredValues.length === 0 ? 's' : ''} from '${this.tableName}' table`, filteredValues)
   }
 
-  public deleteRecord () {
-    // TODO: All of this should be refactored into TypeSheet class, and processRequest should just
-    // call one method on TypeSheet, which calls both SheetsService and DataModel
-    const tableDef = DataModel.getTableDefinitionFromMasterProps(this.tableName);
-    
-    //TODO: Deal with this later, but there is a philospical underpinning here that needs to be examined.
-    //Namely, do we add items using the data model we can extract from the spreadsheet in a flexible way,
-    //or do we enforce consistency to provide more secure data; right now, we're favoring consistency 
+  public createRecord () {
+    const tableDef = DataModel.getTableDefinitionFromMasterProps(this.tableName)
     if (!tableDef) {
       return API.sendBadRequestErrorResponse(`The specified table doesn't exist in your data model. Add it to perform create, update, and delete operations.`)
     }
     const table = SheetsService.getTableByName(this.tableName);
-    const recordLocation = SheetsService.getRecordLocationInTable(table, this.payload.id);
-    
+    const rowToAdd = tableDef.columns.map( column => {
+      var columnName = column.name.toLowerCase();
+      if (columnName === 'id') {
+        return Helper.createUUID();
+      }
+      return this.payload[columnName] ? this.payload[columnName] : '';
+    })
+    table.appendRow(rowToAdd)
+    return API.sendSuccessResponse(`Successfully created a record in the '${this.tableName}' table`, rowToAdd)
+  }
+
+  public deleteRecord () {
+    const tableDef = DataModel.getTableDefinitionFromMasterProps(this.tableName)
+    if (!tableDef) {
+      return API.sendBadRequestErrorResponse(`The specified table doesn't exist in your data model. Add it to perform create, update, and delete operations.`)
+    }
+    const table = SheetsService.getTableByName(this.tableName)
+    const recordLocation = SheetsService.getRecordLocationInTable(table, this.payload.id)
     if (recordLocation === -1) {
       return API.sendNotFoundResponse(`A record with the id ${this.payload.id} cannot be found in ${this.tableName} table`)
     }
@@ -62,24 +71,16 @@ export default class TypeSheet {
     return TypeSheet.recursiveFilterProcess(filters, valuesAsJSON); 
   }
   
-  static recursiveFilterProcess (arrayOfFilters, arrayOfValues) {
+  static recursiveFilterProcess (filters: any[], values: any[]) {
     
-    if (arrayOfFilters.length > 0) {
-      var filterToCheck = arrayOfFilters[0];
-      var filteredArray = arrayOfValues.filter(value => value[filterToCheck.prop] === filterToCheck.value)
-      // remove filter we just used
-      arrayOfFilters.shift();
-      // if there are still filters to be checked, 
-      // call again. If not, resolve
-      if (arrayOfFilters.length > 0) {
-        return TypeSheet.recursiveFilterProcess(arrayOfFilters, filteredArray)
-      } else {
-        return filteredArray; 
-      }
-    } else {
-      return arrayOfValues; 
+    if (filters.length > 0) {
+      const filterToCheck = filters[0];
+      const filteredArray = values.filter(value => value[filterToCheck.prop] === filterToCheck.value)
+      filters.shift();
+      if (filters.length > 0) return TypeSheet.recursiveFilterProcess(filters, filteredArray)
+      return filteredArray;
     }
-    
+    return values;
   }
 }
 

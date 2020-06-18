@@ -1,38 +1,18 @@
-import API from '../API'
-import DataModel from '../DataModel'
-import SheetsService from '../services/SheetsService'
-import Helper from '../Helper'
+import TypeSheet from '../TypeSheet'
 
 export default class PostController {
-  private table:string;
+  private tableName:string;
   private data: any;
   constructor(postData:any) {
-    this.table = postData.table
+    this.tableName = postData.table
     this.data = postData.data
   }
 
    processRequest () {
-     // TODO: All of this should be refactored into TypeSheet class, and processRequest should just
-    // call one method on TypeSheet, which calls both SheetsService and DataModel
-    const tableDef = DataModel.getTableDefinitionFromMasterProps(this.table)
-    //TODO: Deal with this later, but there is a philospical underpinning here that needs to be examined.
-    //Namely, do we add items using the data model we can extract from the spreadsheet in a flexible way,
-    //or do we enforce consistency to provide more secure data; right now, we're favoring consistency 
-    if (!tableDef) {
-      return API.sendBadRequestErrorResponse(`The specified table doesn't exist in your data model. Add it to perform create, update, and delete operations.`)
-    }
-    const table = SheetsService.getTableByName(this.table);
-    const rowToAdd = tableDef.columns.map( column => {
-      var columnName = column.name.toLowerCase();
-      if (columnName === 'id') {
-        return Helper.createUUID();
-      }
-      return this.data[columnName] ? this.data[columnName] : '';
+    const typeSheet = new TypeSheet({
+      tableName: this.tableName,
+      payload: this.data
     })
-    //append array to sheet
-    table.appendRow(rowToAdd)
-    //return success to caller
-    
-    return API.sendSuccessResponse(`Successfully created a record in the '${this.table}' table`, rowToAdd)
+    return typeSheet.createRecord()
   }
 }
