@@ -12,6 +12,23 @@ export default class DataModel {
   //static validateRequest (data)
   // this method will check all required fields and do some basic type coercion, pushing errors to an error array
   // if there are errors, join and send a bad request response
+
+  //TODO: consider another class here, and maybe this is all in DataModel
+  //createTable, updateTable, importTable, getTables, getTableByName
+  private tableDefinition = null
+  constructor(tableName) {
+    this.tableDefinition = DataModel.getTableDefinitionFromMasterProps(tableName)
+  }
+  public tableExists():boolean {
+    return this.tableDefinition ? true : false
+  }
+
+  public isValidInput(payload):boolean {
+    return true;
+  }
+  public getTableDefinition() {
+    return this.tableDefinition
+  }
   static setMasterProps (jsonMasterProps) {
     try {
       const props = PropertiesService.getScriptProperties();

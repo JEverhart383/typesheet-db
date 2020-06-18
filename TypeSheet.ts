@@ -3,25 +3,31 @@ import DataModel from "./DataModel";
 import API from "./API";
 import Helper from "./Helper";
 
-
-//This class should have the following methods
-//createRecord, updateRecord
-//TODO: consider another class here, and maybe this is all in DataModel
-//createTable, updateTable, importTable, getTables, getTableByName
-
 export default class TypeSheet {
   private tableName: string = null
   private searchParameters: object = null
   private payload: Payload = null
-  private dataModel: Object = null
+  private dataModel: DataModel = null
   constructor(typeSheetRequest: TypeSheetRequest){
     if (typeSheetRequest.tableName) this.tableName = typeSheetRequest.tableName
     if (typeSheetRequest.searchParameters) this.searchParameters = typeSheetRequest.searchParameters
     if (typeSheetRequest.payload) this.payload = typeSheetRequest.payload
-    this.dataModel = DataModel.getMasterPropsAsJSON()
+    this.dataModel = new DataModel(this.tableName)
   }
+  public methodBlueprint () {
+    //pre data model stuff
+      //if invalid data or not in data model reject
+      //transform input to match columns if needed
+      //run pre hooks to resolve any stuff there
+    //read, write, update, delete, etc.
+      //transform output if reading
+    //run any post hooks
+    //return response
+    
 
+  }
   public getRecords () {
+    //TODO: add type coercion
     if (this.tableName === 'dataModel') {
       return API.sendSuccessResponse(`Returned data model`, DataModel.getMasterPropsAsJSON())
     }
@@ -32,12 +38,13 @@ export default class TypeSheet {
   }
 
   public createRecord () {
-    const tableDef = DataModel.getTableDefinitionFromMasterProps(this.tableName)
-    if (!tableDef) {
-      return API.sendBadRequestErrorResponse(`The specified table doesn't exist in your data model. Add it to perform create, update, and delete operations.`)
-    }
+    //TODO: add type validation, add required validation
+    if (!this.dataModel.tableExists()) return API.sendBadRequestErrorResponse(DataModelValidationErrorMessages.TABLE_DOES_NOT_EXIST)
+
     const table = SheetsService.getTableByName(this.tableName);
-    const rowToAdd = tableDef.columns.map( column => {
+
+    //TODO: consider whether this could be a DataModel method, like mapPayloadToColumns
+    const rowToAdd = this.dataModel.getTableDefinition().columns.map( column => {
       var columnName = column.name.toLowerCase();
       if (columnName === 'id') {
         return Helper.createUUID();
@@ -49,29 +56,25 @@ export default class TypeSheet {
   }
 
   public updateRecord () {
-    const tableDef = DataModel.getTableDefinitionFromMasterProps(this.tableName)
-    if (!tableDef) {
-      return API.sendBadRequestErrorResponse(`The specified table doesn't exist in your data model. Add it to perform create, update, and delete operations.`)
-    }
+    //TODO: add type validation, add required validation
+    if (!this.dataModel.tableExists()) return API.sendBadRequestErrorResponse(DataModelValidationErrorMessages.TABLE_DOES_NOT_EXIST)
     const table = SheetsService.getTableByName(this.tableName)
     const recordLocation = SheetsService.getRecordLocationInTable(table, this.payload.id)
     
     if (recordLocation === -1) {
       return API.sendNotFoundResponse(`A record with the id ${this.payload.id} cannot be found in ${this.tableName} table`)
     }
-    const rowToUpdate = tableDef.columns.map(column =>{
+    //TODO: consider whether this could be a DataModel method, like mapPayloadToColumns
+    const rowToUpdate = this.dataModel.getTableDefinition().columns.map(column =>{
       let columnName = column.name.toLowerCase()
       return this.payload[columnName] ? this.payload[columnName] : ''
     })
     table.getRange(recordLocation, 1, 1, rowToUpdate.length).setValues([rowToUpdate])
     return API.sendSuccessResponse(`Successfully updated record with the id ${this.payload.id} in ${this.tableName} table`, this.payload)
   }
-  
+
   public deleteRecord () {
-    const tableDef = DataModel.getTableDefinitionFromMasterProps(this.tableName)
-    if (!tableDef) {
-      return API.sendBadRequestErrorResponse(`The specified table doesn't exist in your data model. Add it to perform create, update, and delete operations.`)
-    }
+    if (!this.dataModel.tableExists()) return API.sendBadRequestErrorResponse(DataModelValidationErrorMessages.TABLE_DOES_NOT_EXIST)
     const table = SheetsService.getTableByName(this.tableName)
     const recordLocation = SheetsService.getRecordLocationInTable(table, this.payload.id)
     if (recordLocation === -1) {
@@ -111,4 +114,9 @@ interface TypeSheetRequest {
 
 interface Payload {
   id: string
+}
+
+enum DataModelValidationErrorMessages {
+  TABLE_DOES_NOT_EXIST = `The specified table doesn't exist in your data model. Add it to perform create, update, and delete operations.`,
+
 }

@@ -53,7 +53,7 @@ export default class HTTPController {
     }
   }
 
-  validateRequest():string[] {
+  validateRequest(): string[] {
     const errors = []
     if (this.httpMethod === 'GET') {
       if (this.httpEvent.queryString.length > 0 && !this.httpEvent.parameter.table) {
@@ -80,7 +80,8 @@ export default class HTTPController {
   }
   
 }
-// This ENUM should cover all of the 400 bad request error messages
+// This ENUM should cover all of the 400 bad request error messages that deal with the formatting of an API request
+// but it does not deal with actually checking the payload against the data model
 enum ValidationErrorMessages {
   MISSING_TABLE_GET = 'Each GET request must specify a table parameter at minimum',
   MISSING_TABLE_POST = 'Each POST request must specify a table key:value property',
