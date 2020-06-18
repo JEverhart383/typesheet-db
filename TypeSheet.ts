@@ -7,14 +7,14 @@ import API from "./API";
 
 
 //This class should have the following methods
-//deleteRecord, createRecord, updateRecord
+//createRecord, updateRecord
 //createTable, updateTable, importTable, getTables, getTableByName
 //This might also work better as an instance class
 
 export default class TypeSheet {
   private tableName: string = null
   private searchParameters: object = null
-  private payload: object = null
+  private payload: Payload = null
   private dataModel: Object = null
   constructor(typeSheetRequest: TypeSheetRequest){
     if (typeSheetRequest.tableName) this.tableName = typeSheetRequest.tableName
@@ -33,6 +33,27 @@ export default class TypeSheet {
     var tableValues = TypeSheet.getTableValuesAsJSON(table);
     var filteredValues = TypeSheet.filterTablesByParams(this.searchParameters, tableValues);
     return API.sendSuccessResponse(`Successfully read ${filteredValues.length} record${filteredValues.length > 1 || filteredValues.length === 0 ? 's' : ''} from '${this.tableName}' table`, filteredValues)
+  }
+
+  public deleteRecord () {
+    // TODO: All of this should be refactored into TypeSheet class, and processRequest should just
+    // call one method on TypeSheet, which calls both SheetsService and DataModel
+    const tableDef = DataModel.getTableDefinitionFromMasterProps(this.tableName);
+    
+    //TODO: Deal with this later, but there is a philospical underpinning here that needs to be examined.
+    //Namely, do we add items using the data model we can extract from the spreadsheet in a flexible way,
+    //or do we enforce consistency to provide more secure data; right now, we're favoring consistency 
+    if (!tableDef) {
+      return API.sendBadRequestErrorResponse(`The specified table doesn't exist in your data model. Add it to perform create, update, and delete operations.`)
+    }
+    const table = SheetsService.getTableByName(this.tableName);
+    const recordLocation = SheetsService.getRecordLocationInTable(table, this.payload.id);
+    
+    if (recordLocation === -1) {
+      return API.sendNotFoundResponse(`A record with the id ${this.payload.id} cannot be found in ${this.tableName} table`)
+    }
+    table.deleteRow(recordLocation)
+    return API.sendSuccessResponse(`Successfully deleted record with the id  ${this.payload.id} in ${this.tableName} table`, this.payload)
   }
   static getTableValuesAsJSON (table: GoogleAppsScript.Spreadsheet.Sheet ): any {
     const rows = SheetsService.getTableValuesAsArray(table)
@@ -80,6 +101,10 @@ export default class TypeSheet {
 
 interface TypeSheetRequest {
   tableName: string;
-  payload?: object;
+  payload?: Payload;
   searchParameters?: object;
+}
+
+interface Payload {
+  id: string
 }
