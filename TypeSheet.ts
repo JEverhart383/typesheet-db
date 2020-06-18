@@ -1,6 +1,3 @@
-//TypeSheet should be our main coordination class for using the methods on 
-// DataModel and SheetsService to make changes to the underlying structure of the sheets
-
 import SheetsService from "./services/SheetsService";
 import DataModel from "./DataModel";
 import API from "./API";
@@ -8,8 +5,8 @@ import API from "./API";
 
 //This class should have the following methods
 //createRecord, updateRecord
+//TODO: consider another class here, and maybe this is all in DataModel
 //createTable, updateTable, importTable, getTables, getTableByName
-//This might also work better as an instance class
 
 export default class TypeSheet {
   private tableName: string = null
@@ -30,7 +27,7 @@ export default class TypeSheet {
     //TODO: think about this pattern, new TypeSheet(table)
     //const items = TypeSheet.getTypes(parameters)
     var table = SheetsService.getTableByName(this.tableName); 
-    var tableValues = TypeSheet.getTableValuesAsJSON(table);
+    var tableValues = SheetsService.getTableValuesAsJSON(table);
     var filteredValues = TypeSheet.filterTablesByParams(this.searchParameters, tableValues);
     return API.sendSuccessResponse(`Successfully read ${filteredValues.length} record${filteredValues.length > 1 || filteredValues.length === 0 ? 's' : ''} from '${this.tableName}' table`, filteredValues)
   }
@@ -55,20 +52,7 @@ export default class TypeSheet {
     table.deleteRow(recordLocation)
     return API.sendSuccessResponse(`Successfully deleted record with the id  ${this.payload.id} in ${this.tableName} table`, this.payload)
   }
-  static getTableValuesAsJSON (table: GoogleAppsScript.Spreadsheet.Sheet ): any {
-    const rows = SheetsService.getTableValuesAsArray(table)
-    const headers = rows.shift()
-    const jsonValues = rows.map(function(row) {
-      let jsonValue = {}
-      row.forEach(function(value, index) {
-        let key = headers[index].toLowerCase();
-        jsonValue[key] = value;
-      })
-      return jsonValue
-    })
 
-    return jsonValues
-  }
   static filterTablesByParams (parameters, valuesAsJSON) {
     var filters = [];
     for (var key in parameters) {

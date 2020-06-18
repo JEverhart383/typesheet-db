@@ -24,7 +24,19 @@ export default class SheetsService {
   static getTableValuesAsArray (table: GoogleAppsScript.Spreadsheet.Sheet ): any[] {
     return table.getDataRange().getValues(); 
   }
-
+  static getTableValuesAsJSON (table: GoogleAppsScript.Spreadsheet.Sheet ): any {
+    const rows = SheetsService.getTableValuesAsArray(table)
+    const headers = rows.shift()
+    const jsonValues = rows.map(function(row) {
+      let jsonValue = {}
+      row.forEach(function(value, index) {
+        let key = headers[index].toLowerCase();
+        jsonValue[key] = value;
+      })
+      return jsonValue
+    })
+    return jsonValues
+  }
   static getRecordLocationInTable (table: GoogleAppsScript.Spreadsheet.Sheet, id:string): any {
     //TODO: Update this method to return recordLocation as number
     var lastRow = table.getLastRow();
